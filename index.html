@@ -843,7 +843,7 @@ const articles=[
   {title:'Fetal Movement Patterns',emoji:'👶',meta:'3 min read'},
   {title:'Kegel Exercises Guide',emoji:'💪',meta:'4 min read'},
   {title:'Sleep Better During Pregnancy',emoji:'😴',meta:'6 min read'},
-  {id:10,title:'Tablet El Sitt x Anfoushy Cultural Palace',dateDisplay:'Fri 7 Aug',date:'2026-08-07',dateEnd:'',time:'21:00',timeDisplay:'9:00 PM',doorsOpen:'8:00 PM',venue:'Al Anfoushy Theater',venueAddress:'59 Kasr Al Tin, Ras at Tin, Al Gomrok, Alexandria',locCat:'Alexandria',category:'Concert',organizer:'Fada Arts',priceDisplay:'EGP 450-800',priceMin:450,priceMax:800,ticketTiers:[{name:'Silver Close',price:450},{name:'Gold Close',price:550},{name:'Platinum Close',price:700},{name:'VIP Close',price:800}],ticketUrl:'https://www.ticketsmarche.com/event/Tablet-El-Sitt_8622',imageUrl:'https://d3vzzcunewy153.cloudfront.net/img/17f95c00-4ab0-492d-94a6-3a647e5ea2fe/f1bb8ec3ecefa24da5d86299492152f0.jpg',emoji:'🎶',ageRestriction:'Ages 7+ only',language:'Arabic',facilities:['Parking','Bathrooms','Food Services','Security'],status:'confirmed',desc:'An unforgettable evening of timeless Arabic classics and beautiful melodies celebrating the golden era of Arabic songs. No cameras or outside food permitted.',active:true},];
+];
 const offerCats=['All','Baby Gear','Fashion','Beauty','Nutrition','Learning'];
 const bgColors=['#D6EEF8','#D6F0EB','#F8EED6','#EDD6F8','#F8D6E4','#D6D8F8','#F8F0D6','#D6F8E8'];
 const offers=[
@@ -1054,6 +1054,21 @@ function renderHome(){
       </div>
     </div>`;
   }).join('');
+
+  // Daily Read
+  const ag=document.getElementById('home-articles-grid');
+  if(ag) ag.innerHTML=articles.slice(0,4).map((a,i)=>`
+    <div class="offer-card" onclick="openArticleDetail(${i})" style="cursor:pointer">
+      <div class="offer-img" style="background:${bgColors[i%bgColors.length]};font-size:32px">${a.emoji||'📖'}</div>
+      <div class="offer-body">
+        <div class="offer-brand" style="font-size:11px;color:var(--ink-3)">${a.meta||''}</div>
+        <div class="offer-title">${a.title}</div>
+      </div>
+    </div>`).join('');
+
+  // Savings For You
+  const og=document.getElementById('home-offers-grid');
+  if(og) og.innerHTML=offers.slice(0,4).map((o,i)=>offerCardHTML(o,i)).join('');
 }
 
 /* ── RENDER: EVENTS ─────────────────────────────────────── */
