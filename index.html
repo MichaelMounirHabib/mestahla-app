@@ -818,6 +818,20 @@ const events=[
   {id:7,title:'El Leila El Kebeera × Theatro Arkan',dateDisplay:'Sat 1 Aug',date:'2026-08-01',dateEnd:'',time:'20:00',timeDisplay:'8:00 PM',doorsOpen:'7:00 PM',venue:'Theatro Arkan',venueAddress:'Arkan Plaza, El Sheikh Zayed, Giza',locCat:'6th October',category:'Theater',organizer:'Fada Arts',priceDisplay:'EGP 550-1,050',priceMin:550,priceMax:1050,ticketTiers:[{name:'Wings Close',price:550},{name:'Silver Close',price:650},{name:'Gold Close',price:750},{name:'Platinum Close',price:850},{name:'VIP Close',price:1050}],ticketUrl:'https://www.ticketsmarche.com/event/El-Leila-El-Kebeera_8673',imageUrl:'https://d3vzzcunewy153.cloudfront.net/img/17f95c00-4ab0-492d-94a6-3a647e5ea2fe/0da5eda2293980039cd9a23f0cf5f1f6.jpg',emoji:'🎭',ageRestriction:'Ages 7+ only',language:'Arabic',facilities:['Parking','Bathrooms','Food Services','Security'],status:'confirmed',desc:'Step back into the magic of one of Egypt\'s most beloved theatrical classics — an iconic puppet show with timeless characters, joy, and a special opening act.',active:true},
   {id:8,title:'Khayal Mareed Play',dateDisplay:'Jul 21 – Aug 8',date:'2026-07-21',dateEnd:'2026-08-08',time:'20:00',timeDisplay:'8:00 PM',doorsOpen:'',venue:'Theatro Arkan',venueAddress:'Arkan Plaza, El Sheikh Zayed, Giza',locCat:'6th October',category:'Comedy',organizer:'Fekr Production',priceDisplay:'EGP 600-2,000',priceMin:600,priceMax:2000,ticketTiers:[{name:'General',price:600},{name:'Premium',price:2000}],ticketUrl:'https://www.ticketsmarche.com/event/Khayal-Mareed-Play_8475',imageUrl:'',emoji:'🎭',ageRestriction:'',language:'Arabic',facilities:['Parking','Bathrooms','Food Services','Security'],status:'confirmed',desc:'A brand-new interactive comedy experience — you are part of the psychological comedy journey. Featuring Mohamed Abdel Rahman (Tota), Hanady Mehanna, Ahmed El Rafaie, and more.',active:true},
   {id:9,title:'Ruby Sunset Live Concert',dateDisplay:'Fri 24 Jul',date:'2026-07-24',dateEnd:'',time:'17:00',timeDisplay:'5:00 PM',doorsOpen:'11:00 AM',venue:'Amarai Beach',venueAddress:'North Coast, Marsa Matrouh',locCat:'Sahel',category:'Concert',organizer:'Amarai Beach',priceDisplay:'EGP 1,000',priceMin:1000,priceMax:1000,ticketTiers:[{name:'Standard Wave 1',price:1000}],ticketUrl:'https://www.ticketsmarche.com/event/ruby_8657',imageUrl:'https://d3vzzcunewy153.cloudfront.net/img/17f95c00-4ab0-492d-94a6-3a647e5ea2fe/310621bc831320c9acd7c2c769164848.png',emoji:'🎤',ageRestriction:'',language:'Arabic, English',facilities:['Parking','Bathrooms','Food Services','Security','Beach Access'],status:'confirmed',desc:'An unforgettable evening with Ruby at Amarai Beach. Celebrate sunset with live music and breathtaking Mediterranean views. Ticket includes beach entrance.',active:true},];
+const EVENTS_KEY = 'mestahla_events_v2';
+// Merge any admin-saved events from localStorage (admin and user share same GH Pages origin)
+(function(){
+  try {
+    const raw = localStorage.getItem(EVENTS_KEY);
+    if (raw) {
+      const stored = JSON.parse(raw);
+      if (Array.isArray(stored) && stored.length) {
+        events.splice(0, events.length, ...stored);
+      }
+    }
+  } catch(e) {}
+})();
+
 const articles=[
   {title:'What to Expect at Week 24',emoji:'📅',meta:'3 min read'},
   {title:'Iron-Rich Foods During Pregnancy',emoji:'🥗',meta:'5 min read'},
@@ -1059,6 +1073,14 @@ function setEvtDate(v){evtDateFilter=v;renderEventFilters();renderEvents();}
 // setEvtType merged();}
 
 function renderEvents(){
+  // Refresh from shared localStorage on every render (picks up admin edits)
+  try {
+    const raw = localStorage.getItem(EVENTS_KEY);
+    if (raw) {
+      const stored = JSON.parse(raw);
+      if (Array.isArray(stored) && stored.length) events.splice(0, events.length, ...stored);
+    }
+  } catch(e) {}
   renderEventFilters();
   const q=(document.getElementById('event-search')?.value||'').toLowerCase();
   const now=new Date(); now.setHours(0,0,0,0);
