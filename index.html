@@ -1103,6 +1103,7 @@ function renderEvents(){
     }
     return true;
   });
+  list.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
   const el=document.getElementById('events-grid'); if(!el) return;
   el.innerHTML=list.map((e,i)=>{
     const imgHtml=e.imageUrl
