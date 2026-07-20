@@ -1021,36 +1021,39 @@ function toggleTheme(){
 
 /* ── RENDER: HOME ────────────────────────────────────────── */
 function renderHome(){
+  // Load latest from localStorage (admin edits)
+  try{const r=localStorage.getItem(EVENTS_KEY);if(r){const s=JSON.parse(r);if(Array.isArray(s)&&s.length)events.splice(0,events.length,...s);}}catch(e){}
+
+  const upcoming=[...events]
+    .filter(e=>e.active)
+    .sort((a,b)=>(a.date||'').localeCompare(b.date||''))
+    .slice(0,3);
+
   const he=document.getElementById('home-events-grid');
-  if(he) he.innerHTML=events.slice(0,3).map((e,i)=>`
-    <div class="event-card" onclick="openEventDetail(${e.id})">
-      <div class="ev-img-wrap">
-        <div class="event-img" style="background:${bgColors[i%bgColors.length]};height:150px">${e.emoji}</div>
-        <div class="ev-status ${e.status}">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</div>
-      </div>
+  if(he) he.innerHTML=upcoming.map((e,i)=>{
+    const dDisp=e.dateDisplay||(e.date?new Date(e.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}):'TBA');
+    const tDisp=e.timeDisplay||(e.time?new Date('2000-01-01T'+e.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}):'');
+    const priceLabel=e.priceDisplay||(e.priceMin===0?'Free':`EGP ${e.priceMin.toLocaleString()}${e.priceMax>e.priceMin?'–'+e.priceMax.toLocaleString():''}`);
+    const imgHtml=e.imageUrl
+      ?`<img src="${e.imageUrl}" style="width:100%;height:150px;object-fit:cover;display:block;border-radius:14px 14px 0 0" alt="${e.title}" onerror="this.style.display='none'">`
+      :`<div style="height:150px;display:flex;align-items:center;justify-content:center;font-size:52px;background:${bgColors[i%bgColors.length]};border-radius:14px 14px 0 0">${e.emoji||'📅'}</div>`;
+    const statusLabel=e.status==='confirmed'?'Confirmed':e.status==='waitlisted'?'Waitlisted':e.status==='sold-out'?'Sold Out':'Open';
+    return `<div class="event-card" onclick="openEventDetail(${e.id})">
+      <div class="ev-img-wrap">${imgHtml}</div>
       <div class="event-body">
+        <div class="ev-pills">
+          <span class="ev-cat-pill">${e.category||''}</span>
+          <span class="ev-st-pill ev-st-${e.status}">${statusLabel}</span>
+        </div>
         <div class="event-title">${e.title}</div>
         <div class="event-meta">
-          <div class="ev-row">📅 ${e.date}</div>
-          <div class="ev-row" style="color:var(--teal)">📍 ${e.location}</div>
-          <div class="ev-row">💰 ${e.price}</div>
+          <div class="ev-row">📅 ${dDisp}${tDisp?' · '+tDisp:''}</div>
+          <div class="ev-row" style="color:var(--teal)">📍 ${e.venue||e.location||''}</div>
+          <div class="ev-row">🎫 ${priceLabel}</div>
         </div>
       </div>
-    </div>`).join('');
-
-  const ha=document.getElementById('home-articles-grid');
-  if(ha) ha.innerHTML=articles.map((a,i)=>`
-    <div class="article-card" onclick="openArticleDetail(${i})">
-      <div class="article-emoji">${a.emoji}</div>
-      <div class="article-info">
-        <div class="article-title">${a.title}</div>
-        <div class="article-meta">${a.meta}</div>
-      </div>
-    </div>`).join('');
-
-  const ho=document.getElementById('home-offers-grid');
-  if(ho) ho.innerHTML=offers.slice(0,4).map((o,i)=>offerCardHTML(o,i)).join('');
-}
+    </div>`;
+  }).join('');
 
 /* ── RENDER: EVENTS ─────────────────────────────────────── */
 const evtLocs=['All','Online','Cairo','New Cairo','Maadi','Sahel','Madinaty','6th October','Alexandria'];
