@@ -1074,13 +1074,10 @@ function renderEventFilters(){
     el.innerHTML=g.values.map(v=>`<button class="fchip${g.active===v?' fchip-on':''}" onclick="${g.fn}('${v}')">${v}</button>`).join('');
   });
 }
-// setEvtLoc merged();}
-// setEvtPrice merged();}
-// setEvtType merged();}
+function setEvtLoc(v){evtLocFilter=v;renderEventFilters();renderEvents();}
+function setEvtPrice(v){evtPriceFilter=v;renderEventFilters();renderEvents();}
+function setEvtType(v){evtTypeFilter=v;renderEventFilters();renderEvents();}
 function setEvtDate(v){evtDateFilter=v;renderEventFilters();renderEvents();}
-// setEvtLoc merged();}
-// setEvtPrice merged();}
-// setEvtType merged();}
 
 function renderEvents(){
   try{const r=localStorage.getItem(EVENTS_KEY);if(r){const s=JSON.parse(r);if(Array.isArray(s)&&s.length)events.splice(0,events.length,...s);}}catch(e){}
