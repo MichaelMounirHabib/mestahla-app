@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -695,11 +695,29 @@ a{color:var(--brand);cursor:pointer;text-decoration:none}
               <div class="chips" id="evt-price-chips"></div>
             </div>
             <div class="evt-filter-row">
-              <span class="evt-filter-label">🎯 Type</span>
+              <span class="evt-filter-label">🎯 Category</span>
               <div class="chips" id="evt-type-chips"></div>
             </div>
+            <div class="evt-filter-row">
+              <span class="evt-filter-label">📅 Date</span>
+              <div class="chips" id="evt-date-chips"></div>
+            </div>
           </div>
-          <div class="events-grid" id="events-grid"></div>
+          <div class="events-grid"'@
+
+Write-Host "Step 7 done, len: $($app.Length)"
+
+# 8. Add CSS for new event card elements
+$newCss = @'
+
+.ev-img-wrap{position:relative;overflow:hidden;border-radius:16px 16px 0 0}
+.ev-status-badge{position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.ev-status-badge.confirmed{background:rgba(49,91,84,.85);color:#fff}
+.ev-status-badge.waitlisted{background:rgba(246,200,76,.92);color:#4A3B00}
+.ev-status-badge.sold-out{background:rgba(220,38,38,.85);color:#fff}
+.ev-status-badge.free{background:rgba(120,201,212,.9);color:#103840}
+.ev-cat-badge{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.88);color:var(--teal);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.ev-row{font-size:13px;color:var(--ink-2);line-height:1.5} id="events-grid"></div>
         </div>
       </div>
 
@@ -786,17 +804,17 @@ a{color:var(--brand);cursor:pointer;text-decoration:none}
 let loginTab='email', regTab='email', selStage='pregnant';
 let loginOTP='', regOTP='', waterCount=4;
 let activeOfferCat='All';
-let evtLocFilter='All', evtPriceFilter='All', evtTypeFilter='All';
+let evtLocFilter='All', evtPriceFilter='All', evtTypeFilter='All', evtDateFilter='All';
 let currentUser={name:'Sara Ahmed',email:'sara@example.com',initials:'S'};
 
 /* ── DATA ───────────────────────────────────────────────── */
 const events=[
-  {id:1,title:'Cairo Bump & Baby Fair 2025',date:'Sat 12 Jul · 10:00 AM',location:'Cairo Festival City Mall',locCat:'New Cairo',type:'Fair',status:'confirmed',price:'Free',priceVal:0,emoji:'🎪',desc:'The biggest baby and maternity fair in Egypt — hundreds of brands, live workshops, and giveaways for expecting and new mothers.'},
-  {id:2,title:'Prenatal Yoga Workshop',date:'Wed 16 Jul · 5:00 PM',location:'Maadi Sporting Club',locCat:'Maadi',type:'Workshop',status:'waitlisted',price:'EGP 150',priceVal:150,emoji:'🧘‍♀️',desc:'A relaxing yoga session designed specifically for pregnant women in their second and third trimester. Certified instructor.'},
-  {id:3,title:'Baby First Aid Masterclass',date:'Fri 18 Jul · 11:00 AM',location:'Online · Zoom',locCat:'Online',type:'Masterclass',status:'confirmed',price:'Free',priceVal:0,emoji:'🏥',desc:'Learn essential first aid for newborns and infants from certified pediatric nurses. Recording available for 7 days.'},
-  {id:4,title:'Newborn Photography Session',date:'Mon 21 Jul · 2:00 PM',location:'Garden City, Cairo',locCat:'Cairo',type:'Workshop',status:'free',price:'EGP 200',priceVal:200,emoji:'📸',desc:'Professional newborn photography masterclass. Learn how to capture precious first moments at home beautifully.'},
-  {id:5,title:'Breastfeeding Support Circle',date:'Thu 24 Jul · 6:00 PM',location:'Online · Google Meet',locCat:'Online',type:'Support Circle',status:'free',price:'Free',priceVal:0,emoji:'💛',desc:'A safe and supportive space to share experiences and get expert advice on breastfeeding. All stages welcome.'},
-  {id:6,title:'Maternity Fashion Show',date:'Sat 26 Jul · 3:00 PM',location:'Conrad Hotel, Cairo',locCat:'Cairo',type:'Show',status:'free',price:'Free',priceVal:0,emoji:'👗',desc:'Discover the latest maternity fashion trends. Featured Egyptian and international designers with exclusive shopping discounts.'},
+  {id:1,title:'Cairo Bump & Baby Fair',dateDisplay:'Sat 12 Jul',date:'2026-07-12',dateEnd:'',time:'10:00',timeDisplay:'10:00 AM',doorsOpen:'09:30 AM',venue:'Cairo Festival City Mall',venueAddress:'Cairo Festival City, New Cairo, Cairo',locCat:'New Cairo',category:'Fair',organizer:'Mestahla',priceDisplay:'Free',priceMin:0,priceMax:0,ticketTiers:[{name:'General Admission',price:0}],ticketUrl:'',imageUrl:'',emoji:'🎪',ageRestriction:'All ages welcome',language:'Arabic, English',facilities:['Parking','Food & Beverages','Stroller Access'],status:'confirmed',desc:'The biggest baby and maternity fair in Egypt — hundreds of brands, live workshops, and giveaways for expecting and new mothers.',active:true},
+  {id:2,title:'Prenatal Yoga Workshop',dateDisplay:'Wed 16 Jul',date:'2026-07-16',dateEnd:'',time:'17:00',timeDisplay:'5:00 PM',doorsOpen:'4:45 PM',venue:'Maadi Sporting Club',venueAddress:'Maadi Sporting Club, Maadi, Cairo',locCat:'Maadi',category:'Workshop',organizer:'Dr. Nour Wellness',priceDisplay:'EGP 150',priceMin:150,priceMax:150,ticketTiers:[{name:'General',price:150}],ticketUrl:'',imageUrl:'',emoji:'🧘',ageRestriction:'Pregnant women only',language:'Arabic',facilities:['Parking','Changing Rooms'],status:'waitlisted',desc:'A relaxing yoga session designed specifically for pregnant women in their second and third trimester.',active:true},
+  {id:3,title:'Baby First Aid Masterclass',dateDisplay:'Fri 18 Jul',date:'2026-07-18',dateEnd:'',time:'11:00',timeDisplay:'11:00 AM',doorsOpen:'',venue:'Online · Zoom',venueAddress:'Online',locCat:'Online',category:'Masterclass',organizer:'Pediatric Care Egypt',priceDisplay:'Free',priceMin:0,priceMax:0,ticketTiers:[{name:'Free Registration',price:0}],ticketUrl:'',imageUrl:'',emoji:'🏥',ageRestriction:'18+',language:'Arabic, English',facilities:[],status:'confirmed',desc:'Learn essential first aid for newborns and infants from certified pediatric nurses. Recording available for 7 days.',active:true},
+  {id:4,title:'Newborn Photography Masterclass',dateDisplay:'Mon 21 Jul',date:'2026-07-21',dateEnd:'',time:'14:00',timeDisplay:'2:00 PM',doorsOpen:'',venue:'Garden City Studio',venueAddress:'Garden City, Downtown Cairo',locCat:'Cairo',category:'Workshop',organizer:'Lens & Light Studio',priceDisplay:'EGP 200',priceMin:200,priceMax:200,ticketTiers:[{name:'General',price:200}],ticketUrl:'',imageUrl:'',emoji:'📸',ageRestriction:'All ages',language:'Arabic',facilities:['Parking'],status:'confirmed',desc:'Professional newborn photography masterclass. Learn how to capture precious first moments at home beautifully.',active:true},
+  {id:5,title:'Breastfeeding Support Circle',dateDisplay:'Thu 24 Jul',date:'2026-07-24',dateEnd:'',time:'18:00',timeDisplay:'6:00 PM',doorsOpen:'',venue:'Online · Google Meet',venueAddress:'Online',locCat:'Online',category:'Support Circle',organizer:'Mestahla Community',priceDisplay:'Free',priceMin:0,priceMax:0,ticketTiers:[{name:'Free',price:0}],ticketUrl:'',imageUrl:'',emoji:'💛',ageRestriction:'All',language:'Arabic',facilities:[],status:'confirmed',desc:'A safe and supportive space to share breastfeeding experiences and get expert advice from certified lactation consultants.',active:true},
+  {id:6,title:'Maternity Fashion Show',dateDisplay:'Sat 26 Jul',date:'2026-07-26',dateEnd:'',time:'15:00',timeDisplay:'3:00 PM',doorsOpen:'2:30 PM',venue:'Conrad Hotel',venueAddress:'Conrad Hotel, Corniche El Nil, Cairo',locCat:'Cairo',category:'Show',organizer:'Mama Style EG',priceDisplay:'Free',priceMin:0,priceMax:0,ticketTiers:[{name:'General Admission',price:0}],ticketUrl:'',imageUrl:'',emoji:'👗',ageRestriction:'All ages',language:'Arabic, English',facilities:['Parking','Valet','Food & Beverages'],status:'confirmed',desc:'Discover the latest maternity fashion trends with Egyptian and international designers, with exclusive shopping discounts.',active:true},
 ];
 const articles=[
   {title:'What to Expect at Week 24',emoji:'📅',meta:'3 min read'},
@@ -1015,50 +1033,73 @@ function renderHome(){
 }
 
 /* ── RENDER: EVENTS ─────────────────────────────────────── */
-const evtLocs=['All','Online','Cairo','New Cairo','Maadi'];
-const evtPrices=['All','Free','Paid'];
-const evtTypes=['All','Fair','Workshop','Masterclass','Support Circle','Show'];
+const evtLocs=['All','Online','Cairo','New Cairo','Maadi','Sahel','Madinaty','6th October'];
+const evtPrices=['All','Free','Under 500','500-1500','1500+'];
+const evtTypes=['All','Fair','Workshop','Masterclass','Support Circle','Show','Concert','Festival'];
+const evtDates=['All','This Week','This Month','Upcoming'];
 
 function renderEventFilters(){
   const lc=document.getElementById('evt-loc-chips');
   const pc=document.getElementById('evt-price-chips');
   const tc=document.getElementById('evt-type-chips');
-  if(lc) lc.innerHTML=evtLocs.map(v=>`<div class="chip ${evtLocFilter===v?'active':''}" onclick="setEvtLoc('${v}')">📍 ${v}</div>`).join('');
-  if(pc) pc.innerHTML=evtPrices.map(v=>`<div class="chip ${evtPriceFilter===v?'active':''}" onclick="setEvtPrice('${v}')">💰 ${v}</div>`).join('');
-  if(tc) tc.innerHTML=evtTypes.map(v=>`<div class="chip ${evtTypeFilter===v?'active':''}" onclick="setEvtType('${v}')">🎯 ${v}</div>`).join('');
+  const dc=document.getElementById('evt-date-chips');
+  if(lc) lc.innerHTML=evtLocs.map(v=>`<div class="chip ${evtLocFilter===v?'active':''}" onclick="setEvtLoc('${v}')">${v}</div>`).join('');
+  if(pc) pc.innerHTML=evtPrices.map(v=>`<div class="chip ${evtPriceFilter===v?'active':''}" onclick="setEvtPrice('${v}')">${v}</div>`).join('');
+  if(tc) tc.innerHTML=evtTypes.map(v=>`<div class="chip ${evtTypeFilter===v?'active':''}" onclick="setEvtType('${v}')">${v}</div>`).join('');
+  if(dc) dc.innerHTML=evtDates.map(v=>`<div class="chip ${evtDateFilter===v?'active':''}" onclick="setEvtDate('${v}')">${v}</div>`).join('');
 }
-function setEvtLoc(v){evtLocFilter=v;renderEventFilters();renderEvents();}
-function setEvtPrice(v){evtPriceFilter=v;renderEventFilters();renderEvents();}
-function setEvtType(v){evtTypeFilter=v;renderEventFilters();renderEvents();}
+// setEvtLoc merged();}
+// setEvtPrice merged();}
+// setEvtType merged();}
+function setEvtDate(v){evtDateFilter=v;renderEventFilters();renderEvents();}
+// setEvtLoc merged();}
+// setEvtPrice merged();}
+// setEvtType merged();}
 
 function renderEvents(){
   renderEventFilters();
   const q=(document.getElementById('event-search')?.value||'').toLowerCase();
+  const now=new Date(); now.setHours(0,0,0,0);
+  const endOfWeek=new Date(now); endOfWeek.setDate(now.getDate()+7);
+  const endOfMonth=new Date(now.getFullYear(),now.getMonth()+1,0);
   const list=events.filter(e=>{
-    if(q&&!e.title.toLowerCase().includes(q)&&!e.location.toLowerCase().includes(q)) return false;
+    if(!e.active) return false;
+    if(q&&!e.title.toLowerCase().includes(q)&&!(e.venue||'').toLowerCase().includes(q)) return false;
     if(evtLocFilter!=='All'&&e.locCat!==evtLocFilter) return false;
-    if(evtPriceFilter==='Free'&&e.priceVal>0) return false;
-    if(evtPriceFilter==='Paid'&&e.priceVal===0) return false;
-    if(evtTypeFilter!=='All'&&e.type!==evtTypeFilter) return false;
+    if(evtTypeFilter!=='All'&&e.category!==evtTypeFilter) return false;
+    if(evtPriceFilter==='Free'&&e.priceMin>0) return false;
+    if(evtPriceFilter==='Under 500'&&(e.priceMin===0||e.priceMin>=500)) return false;
+    if(evtPriceFilter==='500-1500'&&(e.priceMin<500||e.priceMin>1500)) return false;
+    if(evtPriceFilter==='1500+'&&e.priceMin<1500) return false;
+    if(evtDateFilter!=='All'&&e.date){
+      const ed=new Date(e.date+'T00:00:00'); ed.setHours(0,0,0,0);
+      if(evtDateFilter==='This Week'&&(ed<now||ed>endOfWeek)) return false;
+      if(evtDateFilter==='This Month'&&(ed<now||ed>endOfMonth)) return false;
+      if(evtDateFilter==='Upcoming'&&ed<now) return false;
+    }
     return true;
   });
-  const el=document.getElementById('events-grid');
-  if(!el) return;
-  el.innerHTML=list.map((e,i)=>`
-    <div class="event-card" onclick="openEventDetail(${e.id})">
-      <div class="ev-img-wrap">
-        <div class="event-img" style="background:${bgColors[i%bgColors.length]};height:180px;font-size:56px">${e.emoji}</div>
-        <div class="ev-status ${e.status}">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</div>
+  const el=document.getElementById('events-grid'); if(!el) return;
+  el.innerHTML=list.map((e,i)=>{
+    const imgHtml=e.imageUrl
+      ?`<img src="${e.imageUrl}" style="width:100%;height:180px;object-fit:cover;display:block" alt="${e.title}" onerror="this.style.display='none'">`
+      :`<div style="width:100%;height:180px;background:${bgColors[i%bgColors.length]};display:flex;align-items:center;justify-content:center;font-size:56px">${e.emoji}</div>`;
+    const priceLabel=e.priceMin===0?'Free':(e.priceMax>e.priceMin?`EGP ${e.priceMin.toLocaleString()}–${e.priceMax.toLocaleString()}`:`EGP ${e.priceMin.toLocaleString()}`);
+    return `<div class="event-card" onclick="openEventDetail(${e.id})">
+      <div class="ev-img-wrap">${imgHtml}
+        <div class="ev-status-badge ${e.status}">${e.status==='confirmed'?'Confirmed':e.status==='waitlisted'?'Waitlisted':e.status==='sold-out'?'Sold Out':'Open'}</div>
+        <div class="ev-cat-badge">${e.category}</div>
       </div>
       <div class="event-body">
         <div class="event-title">${e.title}</div>
         <div class="event-meta">
-          <div class="ev-row">📅 ${e.date}</div>
-          <div class="ev-row" style="color:var(--teal)">📍 ${e.location}</div>
-          <div class="ev-row">💰 ${e.price} · ${e.type}</div>
+          <div class="ev-row">📅 ${e.dateDisplay}${e.dateEnd?' – '+e.dateEnd:''} · ${e.timeDisplay}</div>
+          <div class="ev-row" style="color:var(--teal)">📍 ${e.venue}</div>
+          <div class="ev-row">🎫 <strong>${priceLabel}</strong>${e.organizer?' · '+e.organizer:''}</div>
         </div>
       </div>
-    </div>`).join('')||'<div style="padding:40px;text-align:center;color:var(--ink-3);grid-column:1/-1">No events match your filters</div>';
+    </div>`;
+  }).join('')||'<div style="padding:40px;text-align:center;color:var(--ink-3);grid-column:1/-1">No events match your filters</div>';
 }
 
 /* ── RENDER: OFFERS ─────────────────────────────────────── */
@@ -1110,24 +1151,35 @@ function closeDetail(){
 function openEventDetail(id){
   const e=events.find(ev=>ev.id===id); if(!e) return;
   const idx=events.indexOf(e);
-  openDetail(`
-    <div class="detail-hero" style="background:${bgColors[idx%bgColors.length]}">${e.emoji}</div>
+  const priceLabel=e.priceMin===0?'Free':(e.priceMax>e.priceMin?`EGP ${e.priceMin.toLocaleString()}–${e.priceMax.toLocaleString()}`:`EGP ${e.priceMin.toLocaleString()}`);
+  const imgHtml=e.imageUrl
+    ?`<img src="${e.imageUrl}" style="width:100%;height:220px;object-fit:cover;border-radius:24px 24px 0 0" alt="${e.title}">`
+    :`<div class="detail-hero" style="background:${bgColors[idx%bgColors.length]}">${e.emoji}</div>`;
+  const tiersHtml=(e.ticketTiers&&e.ticketTiers.length>1)
+    ?`<div style="margin:12px 0"><div style="font-size:11px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Ticket Tiers</div>${e.ticketTiers.map(t=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--ink-2)">${t.name}</span><span style="font-weight:700;color:var(--teal)">${t.price===0?'Free':'EGP '+t.price.toLocaleString()}</span></div>`).join('')}</div>`:'';
+  const facilHtml=(e.facilities&&e.facilities.length)
+    ?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin:12px 0">${e.facilities.map(f=>`<span style="background:var(--brand-lt);color:var(--teal);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600">✓ ${f}</span>`).join('')}</div>`:'';
+  openDetail(`${imgHtml}
     <div class="detail-body">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
-        <div class="detail-title">${e.title}</div>
-        <div class="ev-status ${e.status}" style="flex-shrink:0;margin-top:2px">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div class="detail-title" style="flex:1">${e.title}</div>
+        <div class="ev-status-badge ${e.status}" style="flex-shrink:0;margin-top:2px">${e.status==='confirmed'?'Confirmed':e.status==='waitlisted'?'Waitlisted':e.status==='sold-out'?'Sold Out':'Open'}</div>
       </div>
-      <div class="detail-info-box">
-        <div class="ev-row">📅 ${e.date}</div>
-        <div class="ev-row" style="color:var(--teal)">📍 ${e.location}</div>
-        <div class="ev-row">💰 ${e.price}</div>
-        <div class="ev-row">🎯 ${e.type}</div>
+      <div style="background:var(--brand-xlt);border-radius:12px;padding:14px;margin:12px 0;display:flex;flex-direction:column;gap:7px">
+        <div class="ev-row">📅 <strong>${e.dateDisplay}${e.dateEnd?' – '+e.dateEnd:''}</strong> · ${e.timeDisplay}${e.doorsOpen?' <span style="color:var(--ink-3);font-size:12px">(Doors: '+e.doorsOpen+')</span>':''}</div>
+        ${e.locCat==='Online'?`<div class="ev-row">💻 <strong>${e.venue}</strong></div>`:`<div class="ev-row">📍 <strong>${e.venue}</strong>${e.venueAddress&&e.venueAddress!==e.venue?` <span style="color:var(--ink-3);font-size:12px">· ${e.venueAddress}</span>`:''}</div>`}
+        <div class="ev-row">🎫 <strong>${priceLabel}</strong></div>
+        <div class="ev-row">🎯 ${e.category}${e.organizer?' · <span style="color:var(--ink-2)">👤 '+e.organizer+'</span>':''}</div>
+        ${e.language?`<div class="ev-row">🌐 ${e.language}</div>`:''}
+        ${e.ageRestriction?`<div class="ev-row">👶 ${e.ageRestriction}</div>`:''}
       </div>
-      <p class="detail-desc">${e.desc}</p>
-      <button class="btn-primary" onclick="showToast('Booking confirmed! 🌸');closeDetail()">
-        ${e.priceVal===0?'Register Free →':'Book Now · '+e.price+' →'}
-      </button>
-      <button class="btn-outline" onclick="closeDetail()" style="padding:12px">Cancel</button>
+      ${tiersHtml}
+      ${e.desc?`<p style="color:var(--ink-2);line-height:1.6;margin:12px 0;font-size:14px">${e.desc}</p>`:''}
+      ${facilHtml}
+      ${e.ticketUrl
+        ?`<a href="${e.ticketUrl}" target="_blank" rel="noopener" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:8px">${e.priceMin===0?'Register Free →':'Get Tickets · '+priceLabel+' →'}</a>`
+        :`<button class="btn-primary" style="margin-top:8px" onclick="showToast('${e.priceMin===0?'Registered! See you there 🌸':'Booking request sent! Team will confirm.'}');closeDetail()">${e.priceMin===0?'Register Free →':'Book Now · '+priceLabel+' →'}</button>`}
+      <button class="btn-outline" onclick="closeDetail()" style="padding:12px;margin-top:8px">Close</button>
     </div>`);
 }
 function openOfferDetail(id){
