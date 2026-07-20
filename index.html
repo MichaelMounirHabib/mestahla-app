@@ -1,0 +1,1193 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mestahla — مستهلة</title>
+<style>
+/* ── TOKENS ─────────────────────────────────────────────── */
+:root{
+  /* Mestahla Brand Palette */
+  --teal:#315B54;          /* Mestahla Teal — logo / headers */
+  --forest:#18312D;        /* Deep Forest — sidebar / premium bg */
+  --coral:#F47C6C;         /* Joy Coral — CTAs / human warmth */
+  --coral-dk:#E0604F;
+  --coral-lt:#FDEAE7;
+  --yellow:#F6C84C;        /* Discovery Yellow — highlights */
+  --yellow-lt:#FEF6DC;
+  --sky:#78C9D4;           /* Sky Blue — play / openness */
+  --sky-lt:#E3F5F8;
+  --cream:#FFF7E8;         /* Warm Cream — main canvas */
+  /* Semantic aliases */
+  --purple:#9B86D9;         /* Imagination Purple — creative accent */
+  --purple-lt:#EDE9F8;--purple-dk:#7A68C4;
+  --brand:var(--teal);--brand-dk:var(--forest);
+  --brand-lt:#E4EDEB;--brand-xlt:#F0F5F4;
+  --amber:var(--yellow);--amber-lt:var(--yellow-lt);
+  --bg:var(--cream);--card:#fff;
+  --ink:#26312F;--ink-2:#4A6B63;--ink-3:#8AADA6;
+  --border:#D5E3E0;--sidebar-bg:var(--forest);
+  --shadow:0 2px 12px rgba(24,49,45,.1);--shadow-md:0 4px 20px rgba(24,49,45,.14);
+  --radius:16px;--radius-sm:10px;
+  --font:system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:Georgia,"Times New Roman",serif;
+  --sidebar-w:240px;
+}
+[data-theme="dark"]{
+  --bg:#0E1E1B;--card:#162620;--sidebar-bg:#0A1713;--border:#1E3830;
+  --ink:#D8EDE8;--ink-2:#6B9E95;--ink-3:#3D706A;
+  --brand-lt:#1A3530;--brand-xlt:#122820;
+  --shadow:0 2px 16px rgba(0,0,0,.4);--shadow-md:0 4px 28px rgba(0,0,0,.5);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1E1B;--card:#162620;--sidebar-bg:#0A1713;--border:#1E3830;
+  --ink:#D8EDE8;--ink-2:#6B9E95;--ink-3:#3D706A;
+  --brand-lt:#1A3530;--brand-xlt:#122820;
+  --shadow:0 2px 16px rgba(0,0,0,.4);--shadow-md:0 4px 28px rgba(0,0,0,.5);
+}}
+
+/* ── RESET ──────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;width:100%;outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--brand)}
+input::placeholder{color:var(--ink-3)}
+a{color:var(--brand);cursor:pointer;text-decoration:none}
+
+/* ── AUTH SCREENS (position:fixed overlay) ───────────────── */
+.auth-screen{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:var(--brand)}
+.auth-screen.active{display:flex}
+
+/* SPLASH */
+#screen-splash{flex-direction:column;background:var(--cream);padding:0}
+.splash-rays{position:absolute;inset:0;overflow:hidden;opacity:.2;pointer-events:none}
+.splash-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:32px;padding:40px 24px 48px;max-width:460px;width:100%;margin:auto}
+.splash-logo-wrap{width:min(300px,85vw)}
+.splash-tagline{text-align:center;font-size:16px;color:var(--ink-2);line-height:1.7;font-family:var(--serif);font-style:italic}
+.splash-tagline span{color:var(--brand);font-style:normal;font-weight:700}
+.splash-btns{display:flex;flex-direction:column;gap:12px;width:100%}
+.btn-primary{width:100%;padding:15px;background:var(--coral);color:#fff;border-radius:var(--radius);font-size:16px;font-weight:700;transition:background .15s;text-align:center}
+.btn-primary:hover{background:var(--coral-dk)}
+.btn-outline{width:100%;padding:14px;color:var(--teal);border:2px solid var(--teal);border-radius:var(--radius);font-size:16px;font-weight:700;transition:all .15s;text-align:center;background:transparent}
+.btn-outline:hover{background:var(--brand-lt)}
+.splash-foot{font-size:12px;color:var(--ink-3)}
+
+/* AUTH FORM (login / register) */
+#screen-login,#screen-register{flex-direction:column;background:var(--bg);padding:0;overflow-y:auto}
+.auth-wrap{display:flex;height:100%;width:100%}
+.auth-sidebar{width:340px;min-width:340px;background:var(--forest);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:40px 32px}
+.auth-sidebar-logo{width:200px}
+.auth-tagline{color:rgba(255,255,255,.85);font-family:var(--serif);font-style:italic;font-size:18px;text-align:center;line-height:1.6}
+.auth-form-area{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 24px}
+.auth-form-card{width:100%;max-width:420px;display:flex;flex-direction:column;gap:20px}
+.auth-back{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink-3);margin-bottom:4px}
+.auth-back:hover{color:var(--brand)}
+.auth-heading{font-size:26px;font-weight:800;font-family:var(--serif);color:var(--ink)}
+.auth-sub{font-size:14px;color:var(--ink-3);margin-top:-12px}
+.tab-toggle{display:flex;background:var(--brand-lt);border-radius:var(--radius-sm);padding:4px;gap:4px}
+.tab-btn{flex:1;padding:10px;border-radius:8px;font-size:14px;font-weight:600;color:var(--teal);transition:all .15s;text-align:center}
+.tab-btn.active{background:var(--teal);color:#fff}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:11px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.5px}
+.input-icon-wrap{position:relative}
+.input-icon-wrap input{padding-left:44px}
+.input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none}
+.stage-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stage-card{border:2px solid var(--border);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;cursor:pointer;transition:all .15s}
+.stage-card:hover,.stage-card.sel{border-color:var(--teal);background:var(--brand-lt)}
+.stage-card.sel .stage-lbl{color:var(--teal)}
+.stage-emoji{font-size:28px;margin-bottom:5px}
+.stage-lbl{font-size:12px;font-weight:600;color:var(--ink-2)}
+.otp-hint{background:var(--amber-lt);border:1.5px solid var(--amber);border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;color:#7A4800;line-height:1.5}
+.otp-hint strong{font-size:20px;letter-spacing:4px;display:block;margin-top:4px;font-family:monospace;color:var(--amber)}
+.otp-row{display:flex;gap:10px;justify-content:center}
+.otp-box{width:50px;height:58px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--card);font-size:22px;font-weight:700;text-align:center;color:var(--teal);transition:border-color .15s}
+.otp-box:focus{border-color:var(--teal)}
+.auth-link{font-size:13px;color:var(--ink-3);text-align:center}
+.auth-link a{color:var(--brand);font-weight:600}
+.divider{display:flex;align-items:center;gap:12px;color:var(--ink-3);font-size:13px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.resend-row{text-align:center;font-size:13px;color:var(--ink-3)}
+.resend-link{color:var(--brand);font-weight:600;cursor:pointer}
+.terms{font-size:12px;color:var(--ink-3);text-align:center;line-height:1.6}
+
+/* ── APP SHELL ───────────────────────────────────────────── */
+#app-shell{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+#app-sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--sidebar-bg);border-right:1.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:transform .25s}
+.sb-logo-area{padding:20px 18px;border-bottom:1.5px solid var(--border)}
+.sb-logo{display:block;width:170px}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-group-label{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.35);padding:14px 12px 5px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:var(--radius-sm);color:rgba(255,255,255,.65);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;user-select:none}
+.nav-item:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.95)}
+.nav-item.active{background:var(--coral);color:#fff}
+.nav-icon{font-size:18px;width:22px;text-align:center}
+.sb-user{display:flex;align-items:center;gap:10px;padding:14px 14px;border-top:1.5px solid var(--border)}
+.sb-avatar{width:36px;height:36px;border-radius:50%;background:var(--coral);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.sb-user-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-user-stage{font-size:11px;color:var(--sky)}
+.sb-user-logout{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;cursor:pointer;transition:all .15s;margin-left:auto}
+.sb-user-logout:hover{background:var(--coral);color:#fff}
+
+/* TOP BAR */
+#app-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#app-topbar{background:var(--sidebar-bg);border-bottom:1.5px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:sticky;top:0;z-index:50}
+.topbar-menu-btn{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--brand-lt);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0;display:none}
+.topbar-logo{flex-shrink:0;display:none}
+.topbar-logo svg{width:130px}
+.topbar-search{flex:1;max-width:360px;position:relative}
+.topbar-search input{padding:9px 14px 9px 38px;font-size:13px;border-radius:20px;background:var(--brand-xlt)}
+.topbar-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none}
+.topbar-actions{display:flex;gap:8px;margin-left:auto}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:var(--brand-lt);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .15s;flex-shrink:0}
+.icon-btn:hover{background:var(--coral);color:#fff}
+
+/* PAGES AREA */
+#app-pages{flex:1;overflow-y:auto;padding-bottom:0}
+.page{display:none}
+.page.active{display:block;animation:pageIn .2s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* BOTTOM NAV (mobile only) */
+#app-bottom-nav{background:var(--sidebar-bg);border-top:1.5px solid var(--border);display:none;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.bnav{display:flex;justify-content:space-around}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;cursor:pointer;color:var(--ink-3);font-size:10px;font-weight:500;transition:color .15s;user-select:none}
+.bnav-item.active{color:var(--coral)}
+.bnav-icon{font-size:20px;position:relative}
+.bnav-item.active .bnav-icon::after{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--coral);border-radius:2px}
+
+/* ── SHARED COMPONENTS ───────────────────────────────────── */
+.page-inner{padding:28px 32px;max-width:1400px}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.page-title{font-size:26px;font-weight:800;font-family:var(--serif);color:var(--ink)}
+.page-sub{font-size:13px;color:var(--ink-3);margin-top:2px}
+.section-title{font-size:17px;font-weight:700;color:var(--ink);font-family:var(--serif)}
+.see-all{font-size:13px;color:var(--teal);font-weight:600;cursor:pointer}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.badge{background:var(--amber);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:700;margin-left:6px}
+.pill{display:inline-flex;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700}
+.pill.confirmed{background:var(--brand-lt);color:var(--teal)}
+.pill.waitlisted{background:var(--amber-lt);color:#92400E}
+.pill.free{background:#DCFCE7;color:#166534}
+.search-wrap{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:var(--radius-sm);padding:11px 14px;box-shadow:var(--shadow)}
+.search-wrap input{border:none;background:none;padding:0;flex:1;font-size:14px}
+
+/* ── HOME PAGE ───────────────────────────────────────────── */
+.home-hero{background:var(--forest);padding:32px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.home-hero-text .greet-sm{font-size:13px;color:rgba(255,255,255,.7);margin-bottom:4px}
+.home-hero-text .greet-name{font-family:var(--serif);font-size:28px;color:#fff;font-weight:800}
+.journey-chip{display:inline-flex;align-items:center;gap:6px;background:var(--coral);border:none;color:#fff;border-radius:20px;padding:6px 16px;font-size:13px;font-weight:600;margin-top:12px}
+.home-hero-stats{display:flex;gap:16px;flex-shrink:0}
+.hero-stat{background:rgba(255,255,255,.2);border-radius:var(--radius-sm);padding:14px 20px;text-align:center;color:#fff}
+.hero-stat-val{font-size:24px;font-weight:800;font-family:var(--serif)}
+.hero-stat-lbl{font-size:11px;opacity:.8;margin-top:2px}
+.home-content{display:grid;gap:28px;padding:28px 32px}
+.home-3col{display:grid;grid-template-columns:1.8fr 1.2fr;gap:24px}
+.home-2col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.home-events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.home-offers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.home-articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px}
+.article-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;gap:12px;transition:transform .15s}
+.article-card:hover{transform:translateY(-2px)}
+.article-emoji{width:48px;height:48px;border-radius:10px;background:var(--yellow-lt);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.article-info .article-title{font-size:13px;font-weight:600;color:var(--ink);line-height:1.35}
+.article-info .article-meta{font-size:11px;color:var(--ink-3);margin-top:3px}
+
+/* ── EVENT FILTERS ───────────────────────────────────────── */
+.evt-filters{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 20px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px}
+.evt-filter-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.evt-filter-label{font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;min-width:80px}
+.evt-filter-row .chip{padding:6px 14px;font-size:12px}
+
+/* ── DETAIL MODAL ────────────────────────────────────────── */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:800;display:none;backdrop-filter:blur(2px)}
+.detail-overlay.open{display:block}
+.detail-modal{position:fixed;bottom:0;left:0;right:0;max-height:88vh;background:var(--card);border-radius:24px 24px 0 0;z-index:801;transform:translateY(110%);transition:transform .32s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+.detail-modal.open{transform:translateY(0)}
+@media(min-width:900px){
+  .detail-modal{left:50%;right:auto;width:520px;bottom:auto;top:50%;border-radius:24px;transform:translate(-50%,calc(-50% + 40px));opacity:0;transition:transform .28s cubic-bezier(.4,0,.2,1),opacity .28s}
+  .detail-modal.open{transform:translate(-50%,-50%);opacity:1}
+}
+.detail-hero{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:72px;border-radius:24px 24px 0 0;flex-shrink:0}
+.detail-body{padding:24px;display:flex;flex-direction:column;gap:14px}
+.detail-title{font-size:20px;font-weight:800;font-family:var(--serif);color:var(--ink);line-height:1.3}
+.detail-info-box{background:var(--brand-xlt);border-radius:var(--radius-sm);padding:14px;display:flex;flex-direction:column;gap:8px}
+.detail-desc{font-size:14px;color:var(--ink-2);line-height:1.75}
+.detail-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.12);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;border:none;font-weight:700;line-height:1}
+
+/* ── EVENT CARD ──────────────────────────────────────────── */
+.event-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:transform .15s}
+.event-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.event-img{width:100%;height:160px;object-fit:cover;position:relative;display:flex;align-items:center;justify-content:center;font-size:48px}
+.ev-img-wrap{position:relative}
+.ev-status{position:absolute;top:10px;right:10px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#fff}
+.ev-status.confirmed{background:var(--teal)}
+.ev-status.waitlisted{background:var(--amber)}
+.ev-status.free{background:#16A34A}
+.event-body{padding:14px}
+.event-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:9px;line-height:1.35}
+.event-meta{display:flex;flex-direction:column;gap:4px}
+.ev-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2)}
+
+/* ── OFFER CARD ──────────────────────────────────────────── */
+.offer-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:transform .15s}
+.offer-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.offer-img{width:100%;height:120px;position:relative;display:flex;align-items:center;justify-content:center;font-size:36px}
+.disc-badge{position:absolute;top:8px;left:8px;background:var(--amber);color:#fff;border-radius:7px;padding:4px 8px;font-size:10px;font-weight:700}
+.ch-badge{position:absolute;bottom:8px;right:8px;background:rgba(255,255,255,.92);border-radius:6px;padding:3px 7px;font-size:10px;font-weight:600;color:var(--ink-2)}
+.lock-ov{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:26px}
+.offer-body{padding:10px 13px 12px}
+.offer-brand{font-size:10px;color:var(--teal);font-weight:700;margin-bottom:3px}
+.offer-title{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3}
+
+/* ── EVENTS PAGE ─────────────────────────────────────────── */
+.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+/* ── OFFERS PAGE ─────────────────────────────────────────── */
+.offers-layout{display:grid;grid-template-columns:1fr 280px;gap:24px;align-items:start}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{padding:8px 18px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);font-size:13px;font-weight:500;color:var(--ink-2);cursor:pointer;white-space:nowrap;transition:all .15s}
+.chip.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.offers-main-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.offers-sidebar{}
+.sidebar-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.sidebar-card-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:12px}
+.brand-list{display:flex;flex-direction:column;gap:10px}
+.brand-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 8px;border-radius:8px;transition:background .15s}
+.brand-row:hover{background:var(--sky-lt)}
+.brand-dot{width:36px;height:36px;border-radius:50%;background:var(--sky-lt);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.brand-row-name{font-size:13px;font-weight:600;color:var(--ink)}
+.mall-list{display:flex;flex-direction:column;gap:8px}
+.mall-row{display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px;border-radius:8px;transition:background .15s}
+.mall-row:hover{background:var(--brand-lt);}
+.mall-icon{font-size:22px}
+.mall-row-name{font-size:13px;font-weight:600;color:var(--ink)}
+.mall-loc{font-size:11px;color:var(--ink-3)}
+
+/* ── JOURNEY PAGE ────────────────────────────────────────── */
+.journey-layout{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:start}
+.journey-hero{background:var(--teal);border-radius:var(--radius);padding:24px;color:#fff}
+.j-label{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.j-title{font-family:var(--serif);font-size:24px;font-weight:800;margin-bottom:14px}
+.progress-track{background:rgba(255,255,255,.25);border-radius:10px;height:10px;margin-bottom:6px}
+.progress-fill{background:#fff;height:100%;border-radius:10px}
+.progress-lbl{font-size:11px;opacity:.8;text-align:right}
+.j-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.j-card+.j-card{margin-top:16px}
+.j-card-hd{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.j-icon{width:34px;height:34px;border-radius:9px;background:var(--sky-lt);display:flex;align-items:center;justify-content:center;font-size:18px}
+.baby-inner{display:flex;gap:14px}
+.baby-box{width:70px;height:70px;border-radius:14px;background:var(--amber-lt);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0}
+.baby-size{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.baby-desc{font-size:12px;color:var(--ink-2);line-height:1.55}
+.check-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;font-size:13px;color:var(--ink-2)}
+.check-dot{width:20px;height:20px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:2px}
+.upcoming-box{background:var(--sky-lt);border-radius:var(--radius-sm);padding:16px;position:relative}
+.upcoming-badge{position:absolute;top:12px;right:12px;background:var(--sky);color:#fff;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700}
+.upcoming-title{font-size:13px;font-weight:700;color:var(--teal);margin-bottom:5px}
+.upcoming-desc{font-size:12px;color:var(--ink-2);line-height:1.5;padding-right:55px}
+.water-glasses{display:flex;gap:6px;margin:8px 0}
+.glass{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:background .15s}
+.glass.filled{background:var(--sky)}
+.glass.empty{background:var(--sky-lt)}
+.mood-row{display:flex;gap:10px;margin:10px 0}
+.mood-btn{font-size:24px;cursor:pointer;border-radius:8px;padding:3px;transition:transform .15s}
+.mood-btn:hover,.mood-btn.sel{transform:scale(1.3)}
+.log-btn{width:100%;padding:14px;background:var(--coral);color:#fff;border-radius:var(--radius-sm);font-size:15px;font-weight:700;margin-top:10px;transition:background .15s}
+.log-btn:hover{background:var(--coral-dk)}
+
+/* ── CIRCLE PAGE ─────────────────────────────────────────── */
+.circle-layout{display:grid;grid-template-columns:1fr 300px;gap:24px;align-items:start}
+.circle-composer{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);display:flex;gap:12px;margin-bottom:16px}
+.circle-composer textarea{resize:none;height:70px;font-size:14px;flex:1}
+.post-btn{padding:10px 18px;background:var(--purple);color:#fff;border-radius:var(--radius-sm);font-size:13px;font-weight:700;white-space:nowrap;align-self:flex-end;transition:background .15s}
+.post-btn:hover{background:var(--purple-dk)}
+.post-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px}
+.post-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.post-av{width:38px;height:38px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.post-name{font-size:13px;font-weight:700;color:var(--ink)}
+.post-time{font-size:11px;color:var(--ink-3)}
+.post-text{font-size:14px;color:var(--ink-2);line-height:1.6;margin-bottom:10px}
+.post-actions-row{display:flex;gap:16px}
+.post-action{font-size:12px;color:var(--ink-3);cursor:pointer;display:flex;align-items:center;gap:5px;transition:color .15s}
+.post-action:hover{color:var(--coral)}
+.circle-side-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+.circle-side-title{font-size:14px;font-weight:700;color:var(--purple-dk);margin-bottom:12px}
+.trending-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.trending-item:last-child{border-bottom:none}
+.trending-num{font-size:12px;font-weight:800;color:var(--purple);width:20px}
+.trending-text{font-size:13px;color:var(--ink-2)}
+
+/* ── TOAST ───────────────────────────────────────────────── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:12px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;z-index:999;box-shadow:var(--shadow-md);animation:toastIn .25s ease;white-space:nowrap}
+.toast.gone{display:none}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(14px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ── OVERLAY (mobile sidebar) ────────────────────────────── */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:none}
+.sidebar-overlay.active{display:block}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:1199px){
+  .home-events-grid{grid-template-columns:repeat(2,1fr)}
+  .home-offers-grid{grid-template-columns:repeat(3,1fr)}
+  .events-grid{grid-template-columns:repeat(2,1fr)}
+  .offers-main-grid{grid-template-columns:repeat(2,1fr)}
+  .offers-layout{grid-template-columns:1fr}
+  .offers-sidebar{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .circle-layout{grid-template-columns:1fr}
+  .circle-side-card{display:none}
+  .home-3col{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .home-hero-stats{display:none}
+  .home-articles-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .journey-layout{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  #app-sidebar{display:none;position:fixed;left:0;top:0;bottom:0;z-index:110;transform:translateX(-100%);transition:transform .25s}
+  #app-sidebar.open{display:flex;transform:translateX(0)}
+  .topbar-menu-btn{display:flex}
+  .topbar-logo{display:flex}
+  .topbar-search{display:none}
+  #app-bottom-nav{display:block}
+  .page-inner{padding:16px}
+  .home-content{padding:16px}
+  .home-events-grid{grid-template-columns:1fr}
+  .home-offers-grid{grid-template-columns:1fr 1fr}
+  .events-grid{grid-template-columns:1fr}
+  .offers-layout{grid-template-columns:1fr}
+  .offers-main-grid{grid-template-columns:1fr 1fr}
+  .offers-sidebar{grid-template-columns:1fr}
+  .journey-layout{grid-template-columns:1fr}
+  .home-hero{padding:20px 16px}
+  .home-hero-text .greet-name{font-size:22px}
+  .auth-sidebar{display:none}
+  #app-pages{padding-bottom:72px}
+}
+@media(max-width:480px){
+  .home-offers-grid{grid-template-columns:1fr 1fr}
+  .offers-main-grid{grid-template-columns:1fr 1fr}
+  .home-2col{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="toast gone" id="toast"></div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ═══════════════════ AUTH SCREENS ════════════════════════ -->
+
+<!-- SPLASH -->
+<div class="auth-screen active" id="screen-splash" style="background:var(--cream);padding:0;align-items:center;justify-content:center">
+  <div class="splash-rays" aria-hidden="true">
+    <svg viewBox="0 0 800 800" style="width:100%;height:100%;opacity:.18"><g transform="translate(400,400)">
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(30)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(60)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(90)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(120)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(150)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(180)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(210)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(240)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(270)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(300)"/>
+      <line x1="0" y1="0" x2="0" y2="-600" stroke="#315B54" stroke-width="48" transform="rotate(330)"/>
+    </g></svg>
+  </div>
+  <div class="splash-inner">
+    <div class="splash-logo-wrap">
+      <img class="logo-teal" style="width:100%;display:block" alt="Mestahla">
+    </div>
+    <p class="splash-tagline">A journey <span>worth celebrating</span>.<br>For every Egyptian mother.</p>
+    <div class="splash-btns">
+      <button class="btn-primary" onclick="goScreen('register')">Create Account</button>
+      <button class="btn-outline" onclick="goScreen('login')">Sign In</button>
+    </div>
+    <p class="splash-foot">مستهلة لكل أم مصرية 🌸</p>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="auth-screen" id="screen-login">
+  <div class="auth-wrap">
+    <div class="auth-sidebar">
+      <img class="logo-white" style="width:180px;display:block" alt="Mestahla">
+      <p class="auth-tagline">"Every step of the journey is worth celebrating"</p>
+    </div>
+    <div class="auth-form-area">
+      <div class="auth-form-card">
+        <button class="auth-back" onclick="goScreen('splash')">← Back</button>
+        <div class="auth-heading">Welcome back 👋</div>
+        <div class="auth-sub">Sign in to your Mestahla account</div>
+        <div id="login-step1">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="tab-toggle">
+              <button class="tab-btn active" id="lt-email" onclick="setLoginTab('email')">📧 Email</button>
+              <button class="tab-btn" id="lt-phone" onclick="setLoginTab('phone')">📱 Mobile</button>
+            </div>
+            <div class="form-group">
+              <label class="form-label" id="l-lbl">Email Address</label>
+              <div class="input-icon-wrap">
+                <span class="input-icon" id="l-icon">📧</span>
+                <input type="email" id="l-input" placeholder="you@example.com">
+              </div>
+            </div>
+            <button class="btn-primary" onclick="sendLoginOTP()">Send OTP Code →</button>
+            <div class="divider">or</div>
+            <button class="btn-outline" onclick="quickLogin()">🚀 Quick Demo (Sara Ahmed)</button>
+            <div class="auth-link">No account? <a onclick="goScreen('register')">Register here</a></div>
+          </div>
+        </div>
+        <div id="login-step2" style="display:none;flex-direction:column;gap:16px">
+          <div class="otp-hint">📲 Demo OTP:<strong id="l-otp-display">------</strong></div>
+          <div class="form-group">
+            <label class="form-label">Enter 6-digit OTP</label>
+            <div class="otp-row">
+              <input class="otp-box" maxlength="1" id="l-o0" oninput="otpNext(this,'l-o',1,'verifyLoginOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="l-o1" oninput="otpNext(this,'l-o',2,'verifyLoginOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="l-o2" oninput="otpNext(this,'l-o',3,'verifyLoginOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="l-o3" oninput="otpNext(this,'l-o',4,'verifyLoginOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="l-o4" oninput="otpNext(this,'l-o',5,'verifyLoginOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="l-o5" oninput="otpNext(this,'l-o',6,'verifyLoginOTP')" inputmode="numeric">
+            </div>
+          </div>
+          <button class="btn-primary" onclick="verifyLoginOTP()">Verify & Sign In →</button>
+          <div class="resend-row">Didn't get it? <span class="resend-link" onclick="sendLoginOTP()">Resend OTP</span></div>
+          <button class="auth-back" onclick="showLoginStep(1)" style="justify-content:center">← Change contact</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="auth-screen" id="screen-register">
+  <div class="auth-wrap">
+    <div class="auth-sidebar">
+      <img class="logo-white" style="width:180px;display:block" alt="Mestahla">
+      <p class="auth-tagline">"Join thousands of Egyptian mothers on their journey"</p>
+    </div>
+    <div class="auth-form-area">
+      <div class="auth-form-card">
+        <button class="auth-back" onclick="goScreen('splash')">← Back</button>
+        <div class="auth-heading">Join Mestahla 🌸</div>
+        <div class="auth-sub">Create your account in minutes</div>
+        <div id="reg-step1" style="display:flex;flex-direction:column;gap:16px">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <div class="input-icon-wrap"><span class="input-icon">👤</span><input type="text" id="r-name" placeholder="Your full name"></div>
+          </div>
+          <div class="tab-toggle">
+            <button class="tab-btn active" id="rt-email" onclick="setRegTab('email')">📧 Email</button>
+            <button class="tab-btn" id="rt-phone" onclick="setRegTab('phone')">📱 Mobile</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label" id="r-lbl">Email Address</label>
+            <div class="input-icon-wrap"><span class="input-icon" id="r-icon">📧</span><input type="email" id="r-input" placeholder="you@example.com"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">I am currently</label>
+            <div class="stage-grid">
+              <div class="stage-card sel" id="s-pregnant" onclick="selectStage('pregnant')"><div class="stage-emoji">🤰</div><div class="stage-lbl">Pregnant</div></div>
+              <div class="stage-card" id="s-newmom" onclick="selectStage('newmom')"><div class="stage-emoji">👶</div><div class="stage-lbl">New Mom</div></div>
+              <div class="stage-card" id="s-trying" onclick="selectStage('trying')"><div class="stage-emoji">🌱</div><div class="stage-lbl">Trying</div></div>
+            </div>
+          </div>
+          <div class="form-group" id="due-date-wrap">
+            <label class="form-label">Expected Due Date</label>
+            <input type="date" id="r-due">
+          </div>
+          <button class="btn-primary" onclick="sendRegOTP()">Continue →</button>
+          <div class="terms">By registering you agree to our <a>Terms</a> & <a>Privacy Policy</a></div>
+          <div class="auth-link">Already have an account? <a onclick="goScreen('login')">Sign in</a></div>
+        </div>
+        <div id="reg-step2" style="display:none;flex-direction:column;gap:16px">
+          <p style="font-size:14px;color:var(--ink-2);line-height:1.6">OTP sent to <strong id="r-dest"></strong></p>
+          <div class="otp-hint">📲 Demo OTP:<strong id="r-otp-display">------</strong></div>
+          <div class="form-group">
+            <label class="form-label">Enter OTP Code</label>
+            <div class="otp-row">
+              <input class="otp-box" maxlength="1" id="r-o0" oninput="otpNext(this,'r-o',1,'verifyRegOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="r-o1" oninput="otpNext(this,'r-o',2,'verifyRegOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="r-o2" oninput="otpNext(this,'r-o',3,'verifyRegOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="r-o3" oninput="otpNext(this,'r-o',4,'verifyRegOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="r-o4" oninput="otpNext(this,'r-o',5,'verifyRegOTP')" inputmode="numeric">
+              <input class="otp-box" maxlength="1" id="r-o5" oninput="otpNext(this,'r-o',6,'verifyRegOTP')" inputmode="numeric">
+            </div>
+          </div>
+          <button class="btn-primary" onclick="verifyRegOTP()">Create Account 🌸</button>
+          <div class="resend-row">Didn't get it? <span class="resend-link" onclick="sendRegOTP()">Resend OTP</span></div>
+          <button class="auth-back" onclick="showRegStep(1)" style="justify-content:center">← Go back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ APP SHELL ════════════════════════════ -->
+<div id="app-shell">
+
+  <!-- SIDEBAR -->
+  <nav id="app-sidebar">
+    <div class="sb-logo-area">
+      <img class="sb-logo logo-teal" style="width:170px;display:block" alt="Mestahla">
+    </div>
+    <div class="sb-nav">
+      <div class="nav-group-label">Main</div>
+      <div class="nav-item active" data-tab="home" onclick="setTab('home')"><span class="nav-icon">🏠</span>Home</div>
+      <div class="nav-item" data-tab="journey" onclick="setTab('journey')"><span class="nav-icon">💛</span>My Journey</div>
+      <div class="nav-item" data-tab="events" onclick="setTab('events')"><span class="nav-icon">📅</span>Events</div>
+      <div class="nav-item" data-tab="offers" onclick="setTab('offers')"><span class="nav-icon">🏷</span>Offers & Deals</div>
+      <div class="nav-item" data-tab="circle" onclick="setTab('circle')"><span class="nav-icon">👥</span>Circle</div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sb-avatar">S</div>
+      <div style="flex:1;min-width:0"><div class="sb-user-name" id="sb-name">Sara Ahmed</div><div class="sb-user-stage">Week 24 · Pregnant 🤰</div></div>
+      <button class="sb-user-logout" onclick="logout()" title="Sign out">⏏</button>
+    </div>
+  </nav>
+
+  <div id="app-main">
+    <!-- TOP BAR -->
+    <div id="app-topbar">
+      <button class="topbar-menu-btn" onclick="openSidebar()">☰</button>
+      <div class="topbar-logo">
+        <img class="logo-teal" style="height:36px;display:block" alt="Mestahla">
+      </div>
+      <div class="topbar-search">
+        <span class="topbar-search-icon">🔍</span>
+        <input type="text" placeholder="Search events, offers, articles…" id="global-search">
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" onclick="toggleTheme()">🌙</button>
+        <button class="icon-btn">🔔</button>
+        <button class="icon-btn" id="topbar-avatar" onclick="logout()">S</button>
+      </div>
+    </div>
+
+    <!-- PAGES -->
+    <div id="app-pages">
+
+      <!-- HOME -->
+      <div class="page active" id="page-home">
+        <div class="home-hero">
+          <div class="home-hero-text">
+            <div class="greet-sm">mestahla · مستهلة</div>
+            <div class="greet-name" id="hero-name">Good morning, Sara 🌸</div>
+            <div class="journey-chip">🤰 Week 24 of Pregnancy · 60% complete</div>
+          </div>
+          <div class="home-hero-stats">
+            <div class="hero-stat"><div class="hero-stat-val">9</div><div class="hero-stat-lbl">Active Offers</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">5</div><div class="hero-stat-lbl">Events</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">24</div><div class="hero-stat-lbl">Week</div></div>
+          </div>
+        </div>
+        <div class="home-content">
+          <div>
+            <div class="section-head"><span class="section-title">What's Happening 📅</span><span class="see-all" onclick="setTab('events')">See all ›</span></div>
+            <div class="home-events-grid" id="home-events-grid"></div>
+          </div>
+          <div class="home-3col">
+            <div>
+              <div class="section-head"><span class="section-title">Your Daily Read 💛</span><span class="see-all">See all ›</span></div>
+              <div class="home-articles-grid" id="home-articles-grid"></div>
+            </div>
+          </div>
+          <div>
+            <div class="section-head"><span class="section-title">Savings For You 👛</span><span class="see-all" onclick="setTab('offers')">See all ›</span></div>
+            <div class="home-offers-grid" id="home-offers-grid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOURNEY -->
+      <div class="page" id="page-journey">
+        <div class="page-inner">
+          <div class="page-title" style="margin-bottom:20px">My Journey 💛</div>
+          <div class="journey-layout">
+            <div>
+              <div class="journey-hero" style="margin-bottom:16px">
+                <div class="j-label">Current Progress</div>
+                <div class="j-title">Week 24 of 40</div>
+                <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+                <div class="progress-lbl">60% complete</div>
+              </div>
+              <div class="j-card">
+                <div class="j-card-hd"><div class="j-icon">🔄</div>Baby's Progress This Week</div>
+                <div class="baby-inner"><div class="baby-box">🌽</div><div><div class="baby-size">Size of a corn — ~30cm, ~600g</div><div class="baby-desc">Facial features are fully formed. Baby can hear your voice now. The brain is developing rapidly and the lungs are maturing in preparation for breathing.</div></div></div>
+              </div>
+              <div class="j-card" style="margin-top:16px">
+                <div class="j-card-hd"><div class="j-icon">💪</div>Your Body This Week</div>
+                <div class="check-row"><div class="check-dot">✓</div>Braxton Hicks contractions may begin</div>
+                <div class="check-row"><div class="check-dot">✓</div>Back pain is common — try a pregnancy pillow</div>
+                <div class="check-row"><div class="check-dot">✓</div>Increased appetite — eat small, frequent meals</div>
+              </div>
+              <div class="upcoming-box" style="margin-top:16px">
+                <div class="upcoming-badge">2 weeks</div>
+                <div class="upcoming-title">Upcoming: Anatomy Scan</div>
+                <div class="upcoming-desc">Your 24-week scan checks baby's organs, position, and your placenta health.</div>
+              </div>
+            </div>
+            <div>
+              <div class="j-card">
+                <div class="j-card-hd"><div class="j-icon">📝</div>Daily Log</div>
+                <div style="font-size:12px;color:var(--ink-3);margin-bottom:6px">💧 Water intake (4/8 glasses)</div>
+                <div class="water-glasses" id="water-glasses"></div>
+                <div style="font-size:12px;color:var(--ink-3);margin:12px 0 6px">😊 How are you feeling today?</div>
+                <div class="mood-row">
+                  <span class="mood-btn" onclick="setMood(this)">😴</span>
+                  <span class="mood-btn" onclick="setMood(this)">🙂</span>
+                  <span class="mood-btn sel" onclick="setMood(this)">😊</span>
+                  <span class="mood-btn" onclick="setMood(this)">😰</span>
+                  <span class="mood-btn" onclick="setMood(this)">🤩</span>
+                </div>
+                <button class="log-btn" onclick="showToast('Today logged! 🌸')">Log Today ✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENTS -->
+      <div class="page" id="page-events">
+        <div class="page-inner">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap">
+            <div><div class="page-title">Events & Gatherings</div><div class="page-sub">فعاليات ولقاءات</div></div>
+            <div class="search-wrap" style="flex:1;max-width:340px">
+              <span>🔍</span><input type="text" placeholder="Search events…" id="event-search" oninput="renderEvents()">
+            </div>
+          </div>
+          <!-- FILTERS -->
+          <div class="evt-filters">
+            <div class="evt-filter-row">
+              <span class="evt-filter-label">📍 Location</span>
+              <div class="chips" id="evt-loc-chips"></div>
+            </div>
+            <div class="evt-filter-row">
+              <span class="evt-filter-label">💰 Price</span>
+              <div class="chips" id="evt-price-chips"></div>
+            </div>
+            <div class="evt-filter-row">
+              <span class="evt-filter-label">🎯 Type</span>
+              <div class="chips" id="evt-type-chips"></div>
+            </div>
+          </div>
+          <div class="events-grid" id="events-grid"></div>
+        </div>
+      </div>
+
+      <!-- OFFERS -->
+      <div class="page" id="page-offers">
+        <div class="page-inner">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap">
+            <div><div class="page-title">Offers & Deals</div><div class="page-sub">عروض وصفقات</div></div>
+            <div class="search-wrap" style="flex:1;max-width:320px">
+              <span>🔍</span><input type="text" placeholder="Search brands…" id="offer-search" oninput="renderOffers()">
+            </div>
+          </div>
+          <div class="chips" id="cat-chips"></div>
+          <div class="offers-layout">
+            <div><div class="offers-main-grid" id="offers-main-grid"></div></div>
+            <div class="offers-sidebar">
+              <div class="sidebar-card">
+                <div class="sidebar-card-title">Featured Brands</div>
+                <div class="brand-list" id="brand-list"></div>
+              </div>
+              <div class="sidebar-card">
+                <div class="sidebar-card-title">Explore Malls</div>
+                <div class="mall-list" id="mall-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CIRCLE -->
+      <div class="page" id="page-circle">
+        <div class="page-inner">
+          <div class="page-title" style="margin-bottom:20px">Circle 👥</div>
+          <div class="circle-layout">
+            <div>
+              <div class="circle-composer">
+                <div class="sb-avatar" id="circle-avatar" style="margin-top:4px">S</div>
+                <textarea placeholder="Share something with the community…"></textarea>
+                <button class="post-btn" onclick="showToast('Posted! 🌸')">Post</button>
+              </div>
+              <div id="circle-posts"></div>
+            </div>
+            <div>
+              <div class="circle-side-card">
+                <div class="circle-side-title">Trending Topics</div>
+                <div id="trending-list"></div>
+              </div>
+              <div class="circle-side-card">
+                <div class="circle-side-title">Community Stats</div>
+                <div style="font-size:24px;font-weight:800;color:var(--teal)">2,840</div>
+                <div style="font-size:12px;color:var(--ink-3);margin-bottom:12px">Active mothers this week</div>
+                <div style="font-size:24px;font-weight:800;color:var(--teal)">127</div>
+                <div style="font-size:12px;color:var(--ink-3)">Posts today</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /app-pages -->
+
+    <!-- BOTTOM NAV (mobile) -->
+    <nav id="app-bottom-nav">
+      <div class="bnav">
+        <div class="bnav-item active" data-tab="home" onclick="setTab('home')"><div class="bnav-icon">🏠</div><span>Home</span></div>
+        <div class="bnav-item" data-tab="journey" onclick="setTab('journey')"><div class="bnav-icon">💛</div><span>Journey</span></div>
+        <div class="bnav-item" data-tab="events" onclick="setTab('events')"><div class="bnav-icon">📅</div><span>Events</span></div>
+        <div class="bnav-item" data-tab="offers" onclick="setTab('offers')"><div class="bnav-icon">🏷</div><span>Offers</span></div>
+        <div class="bnav-item" data-tab="circle" onclick="setTab('circle')"><div class="bnav-icon">👥</div><span>Circle</span></div>
+      </div>
+    </nav>
+  </div><!-- /app-main -->
+</div><!-- /app-shell -->
+
+<!-- DETAIL MODAL -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail()"></div>
+<div class="detail-modal" id="detail-modal">
+  <button class="detail-close" onclick="closeDetail()">✕</button>
+  <div id="detail-content"></div>
+</div>
+
+<script>
+/* ── STATE ──────────────────────────────────────────────── */
+let loginTab='email', regTab='email', selStage='pregnant';
+let loginOTP='', regOTP='', waterCount=4;
+let activeOfferCat='All';
+let evtLocFilter='All', evtPriceFilter='All', evtTypeFilter='All';
+let currentUser={name:'Sara Ahmed',email:'sara@example.com',initials:'S'};
+
+/* ── DATA ───────────────────────────────────────────────── */
+const events=[
+  {id:1,title:'Cairo Bump & Baby Fair 2025',date:'Sat 12 Jul · 10:00 AM',location:'Cairo Festival City Mall',locCat:'New Cairo',type:'Fair',status:'confirmed',price:'Free',priceVal:0,emoji:'🎪',desc:'The biggest baby and maternity fair in Egypt — hundreds of brands, live workshops, and giveaways for expecting and new mothers.'},
+  {id:2,title:'Prenatal Yoga Workshop',date:'Wed 16 Jul · 5:00 PM',location:'Maadi Sporting Club',locCat:'Maadi',type:'Workshop',status:'waitlisted',price:'EGP 150',priceVal:150,emoji:'🧘‍♀️',desc:'A relaxing yoga session designed specifically for pregnant women in their second and third trimester. Certified instructor.'},
+  {id:3,title:'Baby First Aid Masterclass',date:'Fri 18 Jul · 11:00 AM',location:'Online · Zoom',locCat:'Online',type:'Masterclass',status:'confirmed',price:'Free',priceVal:0,emoji:'🏥',desc:'Learn essential first aid for newborns and infants from certified pediatric nurses. Recording available for 7 days.'},
+  {id:4,title:'Newborn Photography Session',date:'Mon 21 Jul · 2:00 PM',location:'Garden City, Cairo',locCat:'Cairo',type:'Workshop',status:'free',price:'EGP 200',priceVal:200,emoji:'📸',desc:'Professional newborn photography masterclass. Learn how to capture precious first moments at home beautifully.'},
+  {id:5,title:'Breastfeeding Support Circle',date:'Thu 24 Jul · 6:00 PM',location:'Online · Google Meet',locCat:'Online',type:'Support Circle',status:'free',price:'Free',priceVal:0,emoji:'💛',desc:'A safe and supportive space to share experiences and get expert advice on breastfeeding. All stages welcome.'},
+  {id:6,title:'Maternity Fashion Show',date:'Sat 26 Jul · 3:00 PM',location:'Conrad Hotel, Cairo',locCat:'Cairo',type:'Show',status:'free',price:'Free',priceVal:0,emoji:'👗',desc:'Discover the latest maternity fashion trends. Featured Egyptian and international designers with exclusive shopping discounts.'},
+];
+const articles=[
+  {title:'What to Expect at Week 24',emoji:'📅',meta:'3 min read'},
+  {title:'Iron-Rich Foods During Pregnancy',emoji:'🥗',meta:'5 min read'},
+  {title:'Nursery Setup on a Budget',emoji:'🛏',meta:'4 min read'},
+  {title:'Fetal Movement Patterns',emoji:'👶',meta:'3 min read'},
+  {title:'Kegel Exercises Guide',emoji:'💪',meta:'4 min read'},
+  {title:'Sleep Better During Pregnancy',emoji:'😴',meta:'6 min read'},
+];
+const offerCats=['All','Baby Gear','Fashion','Beauty','Nutrition','Learning'];
+const bgColors=['#D6EEF8','#D6F0EB','#F8EED6','#EDD6F8','#F8D6E4','#D6D8F8','#F8F0D6','#D6F8E8'];
+const offers=[
+  {id:1,brand:'Mothercare',title:'30% Off Strollers',discount:'30% OFF',channel:'In-store',locked:false,cat:'Baby Gear'},
+  {id:2,brand:'Mothercare',title:'Free Gift w/ EGP 500+',discount:'FREE GIFT',channel:'In-store',locked:true,cat:'Baby Gear'},
+  {id:3,brand:'Babyshop',title:'25% Off Baby Clothing',discount:'25% OFF',channel:'Both',locked:false,cat:'Baby Gear'},
+  {id:4,brand:'H&M Mama',title:'Summer Maternity Edit',discount:'20% OFF',channel:'Both',locked:false,cat:'Fashion'},
+  {id:5,brand:'Clarins',title:'Anti-Stretch Mark Cream',discount:'15% OFF',channel:'Online',locked:true,cat:'Beauty'},
+  {id:6,brand:'NUK Egypt',title:'Newborn Feeding Kit',discount:'35% OFF',channel:'Both',locked:false,cat:'Baby Gear'},
+  {id:7,brand:'Chicco',title:'40% Off Car Seat',discount:'40% OFF',channel:'In-store',locked:true,cat:'Baby Gear'},
+  {id:8,brand:'Medela',title:'Breast Pump Special',discount:'EXCLUSIVE',channel:'Online',locked:true,cat:'Nutrition'},
+  {id:9,brand:'Petit Bateau',title:'Newborn Collection',discount:'20% OFF',channel:'Online',locked:false,cat:'Fashion'},
+];
+const brands=['Mothercare','Babyshop','H&M Mama','Clarins','NUK Egypt','Chicco','Medela','Petit Bateau'];
+const malls=[
+  {name:'Cairo Festival City',loc:'New Cairo'},{name:'Mall of Arabia',loc:"6th of October"},
+  {name:'City Centre Almaza',loc:'Heliopolis'},{name:'Point 90',loc:'New Cairo'},
+  {name:'Dandy Mega Mall',loc:'Sheikh Zayed'},
+];
+const posts=[
+  {n:'Nour M.',i:'N',c:'#F4A535',t:'Any recs for a maternity pillow? Week 28 and sleeping is impossible! 😅',time:'2h ago',likes:12,comments:5},
+  {n:'Heba K.',i:'H',c:'#3EAED0',t:'Loved the yoga workshop yesterday! Highly recommend for second trimester mamas 🧘‍♀️✨',time:'5h ago',likes:34,comments:8},
+  {n:'Sara A.',i:'S',c:'#5A9ABB',t:'Week 24 and finally feeling those kicks! 💛 The journey tracker is SO helpful.',time:'1d ago',likes:67,comments:15},
+];
+const trending=['#PregnancyTips','#NewMomEgypt','#BabyGear2025','#MaternityFashion','#BreastfeedingSupport'];
+
+/* ── SIDEBAR ────────────────────────────────────────────── */
+function openSidebar(){
+  document.getElementById('app-sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('active');
+}
+function closeSidebar(){
+  document.getElementById('app-sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+/* ── AUTH SCREENS ───────────────────────────────────────── */
+function goScreen(s){
+  document.querySelectorAll('.auth-screen').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById('screen-'+s);
+  if(el) el.classList.add('active');
+}
+function showLoginStep(n){
+  document.getElementById('login-step1').style.display=n===1?'flex':'none';
+  document.getElementById('login-step2').style.display=n===2?'flex':'none';
+}
+function showRegStep(n){
+  document.getElementById('reg-step1').style.display=n===1?'flex':'none';
+  document.getElementById('reg-step2').style.display=n===2?'flex':'none';
+}
+
+function setLoginTab(t){
+  loginTab=t;
+  document.getElementById('lt-email').classList.toggle('active',t==='email');
+  document.getElementById('lt-phone').classList.toggle('active',t==='phone');
+  document.getElementById('l-lbl').textContent=t==='email'?'Email Address':'Mobile Number';
+  document.getElementById('l-icon').textContent=t==='email'?'📧':'📱';
+  document.getElementById('l-input').type=t==='email'?'email':'tel';
+  document.getElementById('l-input').placeholder=t==='email'?'you@example.com':'+20 1XX XXX XXXX';
+}
+function setRegTab(t){
+  regTab=t;
+  document.getElementById('rt-email').classList.toggle('active',t==='email');
+  document.getElementById('rt-phone').classList.toggle('active',t==='phone');
+  document.getElementById('r-lbl').textContent=t==='email'?'Email Address':'Mobile Number';
+  document.getElementById('r-icon').textContent=t==='email'?'📧':'📱';
+  document.getElementById('r-input').type=t==='email'?'email':'tel';
+  document.getElementById('r-input').placeholder=t==='email'?'you@example.com':'+20 1XX XXX XXXX';
+}
+function selectStage(s){
+  selStage=s;
+  ['pregnant','newmom','trying'].forEach(x=>document.getElementById('s-'+x).classList.toggle('sel',x===s));
+  document.getElementById('due-date-wrap').style.display=s==='pregnant'?'flex':'none';
+}
+
+/* ── OTP ────────────────────────────────────────────────── */
+function genOTP(){return String(Math.floor(100000+Math.random()*900000));}
+function otpNext(el,prefix,nextIdx,finishFn){
+  if(el.value && nextIdx<6) document.getElementById(prefix+(nextIdx))?.focus();
+  if(nextIdx===6 && el.value) window[finishFn]();
+}
+function getOTP(prefix){return Array.from({length:6},(_,i)=>document.getElementById(prefix+i)?.value||'').join('');}
+function clearOTP(prefix){Array.from({length:6},(_,i)=>{const e=document.getElementById(prefix+i);if(e)e.value='';});}
+
+/* ── LOGIN FLOW ─────────────────────────────────────────── */
+function sendLoginOTP(){
+  const v=document.getElementById('l-input').value.trim();
+  if(!v){showToast('Please enter your '+loginTab);return;}
+  loginOTP=genOTP();
+  document.getElementById('l-otp-display').textContent=loginOTP;
+  clearOTP('l-o');
+  showLoginStep(2);
+  document.getElementById('l-o0').focus();
+  showToast('OTP sent! 📲');
+}
+function verifyLoginOTP(){
+  const e=getOTP('l-o');
+  if(e.length<6){return;}
+  if(e===loginOTP){
+    const v=document.getElementById('l-input').value.trim();
+    setCurrentUser('Sara Ahmed',v);
+    enterApp();
+  } else {
+    showToast('Incorrect OTP — try: '+loginOTP);
+    clearOTP('l-o');
+    document.getElementById('l-o0').focus();
+  }
+}
+function quickLogin(){setCurrentUser('Sara Ahmed','sara@example.com');enterApp();}
+
+/* ── REGISTER FLOW ──────────────────────────────────────── */
+function sendRegOTP(){
+  const name=document.getElementById('r-name').value.trim();
+  const contact=document.getElementById('r-input').value.trim();
+  if(!name){showToast('Please enter your name');return;}
+  if(!contact){showToast('Please enter your '+(regTab==='email'?'email':'mobile'));return;}
+  regOTP=genOTP();
+  document.getElementById('r-otp-display').textContent=regOTP;
+  document.getElementById('r-dest').textContent=contact;
+  clearOTP('r-o');
+  showRegStep(2);
+  document.getElementById('r-o0').focus();
+  showToast('OTP sent! 📲');
+}
+function verifyRegOTP(){
+  const e=getOTP('r-o');
+  if(e.length<6){return;}
+  if(e===regOTP){
+    const name=document.getElementById('r-name').value.trim();
+    const contact=document.getElementById('r-input').value.trim();
+    setCurrentUser(name,contact);
+    showRegStep(1);
+    enterApp();
+  } else {
+    showToast('Incorrect OTP — try: '+regOTP);
+    clearOTP('r-o');
+    document.getElementById('r-o0').focus();
+  }
+}
+
+function setCurrentUser(name,contact){
+  const initials=name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||name[0].toUpperCase();
+  currentUser={name,email:contact,initials};
+  document.getElementById('sb-avatar').textContent=initials;
+  document.getElementById('sb-name').textContent=name;
+  document.getElementById('circle-avatar').textContent=initials;
+  document.getElementById('topbar-avatar').textContent=initials;
+  const first=name.split(' ')[0];
+  const h=new Date().getHours();
+  const g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+  document.getElementById('hero-name').textContent=g+', '+first+' 🌸';
+}
+
+function enterApp(){
+  document.querySelectorAll('.auth-screen').forEach(el=>el.classList.remove('active'));
+  showToast('Welcome to Mestahla, '+currentUser.name.split(' ')[0]+'! 🌸');
+}
+function logout(){if(confirm('Sign out?')){goScreen('splash');}}
+
+/* ── APP NAVIGATION ─────────────────────────────────────── */
+function setTab(tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===tab));
+  document.querySelectorAll('.bnav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===tab));
+  if(tab==='events') renderEvents();
+  if(tab==='offers') renderOffers();
+  if(tab==='circle') renderCircle();
+  closeSidebar();
+  document.getElementById('app-pages').scrollTop=0;
+}
+function toggleTheme(){
+  document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
+}
+
+/* ── RENDER: HOME ────────────────────────────────────────── */
+function renderHome(){
+  const he=document.getElementById('home-events-grid');
+  if(he) he.innerHTML=events.slice(0,3).map((e,i)=>`
+    <div class="event-card" onclick="openEventDetail(${e.id})">
+      <div class="ev-img-wrap">
+        <div class="event-img" style="background:${bgColors[i%bgColors.length]};height:150px">${e.emoji}</div>
+        <div class="ev-status ${e.status}">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</div>
+      </div>
+      <div class="event-body">
+        <div class="event-title">${e.title}</div>
+        <div class="event-meta">
+          <div class="ev-row">📅 ${e.date}</div>
+          <div class="ev-row" style="color:var(--teal)">📍 ${e.location}</div>
+          <div class="ev-row">💰 ${e.price}</div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const ha=document.getElementById('home-articles-grid');
+  if(ha) ha.innerHTML=articles.map((a,i)=>`
+    <div class="article-card" onclick="openArticleDetail(${i})">
+      <div class="article-emoji">${a.emoji}</div>
+      <div class="article-info">
+        <div class="article-title">${a.title}</div>
+        <div class="article-meta">${a.meta}</div>
+      </div>
+    </div>`).join('');
+
+  const ho=document.getElementById('home-offers-grid');
+  if(ho) ho.innerHTML=offers.slice(0,4).map((o,i)=>offerCardHTML(o,i)).join('');
+}
+
+/* ── RENDER: EVENTS ─────────────────────────────────────── */
+const evtLocs=['All','Online','Cairo','New Cairo','Maadi'];
+const evtPrices=['All','Free','Paid'];
+const evtTypes=['All','Fair','Workshop','Masterclass','Support Circle','Show'];
+
+function renderEventFilters(){
+  const lc=document.getElementById('evt-loc-chips');
+  const pc=document.getElementById('evt-price-chips');
+  const tc=document.getElementById('evt-type-chips');
+  if(lc) lc.innerHTML=evtLocs.map(v=>`<div class="chip ${evtLocFilter===v?'active':''}" onclick="setEvtLoc('${v}')">📍 ${v}</div>`).join('');
+  if(pc) pc.innerHTML=evtPrices.map(v=>`<div class="chip ${evtPriceFilter===v?'active':''}" onclick="setEvtPrice('${v}')">💰 ${v}</div>`).join('');
+  if(tc) tc.innerHTML=evtTypes.map(v=>`<div class="chip ${evtTypeFilter===v?'active':''}" onclick="setEvtType('${v}')">🎯 ${v}</div>`).join('');
+}
+function setEvtLoc(v){evtLocFilter=v;renderEventFilters();renderEvents();}
+function setEvtPrice(v){evtPriceFilter=v;renderEventFilters();renderEvents();}
+function setEvtType(v){evtTypeFilter=v;renderEventFilters();renderEvents();}
+
+function renderEvents(){
+  renderEventFilters();
+  const q=(document.getElementById('event-search')?.value||'').toLowerCase();
+  const list=events.filter(e=>{
+    if(q&&!e.title.toLowerCase().includes(q)&&!e.location.toLowerCase().includes(q)) return false;
+    if(evtLocFilter!=='All'&&e.locCat!==evtLocFilter) return false;
+    if(evtPriceFilter==='Free'&&e.priceVal>0) return false;
+    if(evtPriceFilter==='Paid'&&e.priceVal===0) return false;
+    if(evtTypeFilter!=='All'&&e.type!==evtTypeFilter) return false;
+    return true;
+  });
+  const el=document.getElementById('events-grid');
+  if(!el) return;
+  el.innerHTML=list.map((e,i)=>`
+    <div class="event-card" onclick="openEventDetail(${e.id})">
+      <div class="ev-img-wrap">
+        <div class="event-img" style="background:${bgColors[i%bgColors.length]};height:180px;font-size:56px">${e.emoji}</div>
+        <div class="ev-status ${e.status}">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</div>
+      </div>
+      <div class="event-body">
+        <div class="event-title">${e.title}</div>
+        <div class="event-meta">
+          <div class="ev-row">📅 ${e.date}</div>
+          <div class="ev-row" style="color:var(--teal)">📍 ${e.location}</div>
+          <div class="ev-row">💰 ${e.price} · ${e.type}</div>
+        </div>
+      </div>
+    </div>`).join('')||'<div style="padding:40px;text-align:center;color:var(--ink-3);grid-column:1/-1">No events match your filters</div>';
+}
+
+/* ── RENDER: OFFERS ─────────────────────────────────────── */
+function offerCardHTML(o,i){
+  return `<div class="offer-card" onclick="openOfferDetail(${o.id})">
+    <div style="position:relative">
+      <div class="offer-img" style="background:${bgColors[i%bgColors.length]}">${o.locked?'🔒':'🏷'}</div>
+      <div class="disc-badge">${o.discount}</div>
+      <div class="ch-badge">${o.channel}</div>
+      ${o.locked?'<div class="lock-ov">🔒</div>':''}
+    </div>
+    <div class="offer-body"><div class="offer-brand">${o.brand}</div><div class="offer-title">${o.title}</div></div>
+  </div>`;
+}
+function renderOffers(){
+  const chips=document.getElementById('cat-chips');
+  if(chips) chips.innerHTML=offerCats.map(c=>`<div class="chip ${c===activeOfferCat?'active':''}" onclick="setOfferCat('${c}')">${c}</div>`).join('');
+  const q=(document.getElementById('offer-search')?.value||'').toLowerCase();
+  const filtered=offers.filter(o=>(!q||(o.brand+o.title).toLowerCase().includes(q))&&(activeOfferCat==='All'||o.cat===activeOfferCat));
+  const g=document.getElementById('offers-main-grid');
+  if(g) g.innerHTML=filtered.map((o,i)=>offerCardHTML(o,i)).join('')||'<div style="padding:40px;text-align:center;color:var(--ink-3);grid-column:1/-1">No offers found</div>';
+  const bl=document.getElementById('brand-list');
+  if(bl) bl.innerHTML=brands.slice(0,6).map((b,i)=>`
+    <div class="brand-row" onclick="showToast('${b}')">
+      <div class="brand-dot" style="background:${bgColors[i%bgColors.length]}">${b.charAt(0)}</div>
+      <div class="brand-row-name">${b}</div>
+    </div>`).join('');
+  const ml=document.getElementById('mall-list');
+  if(ml) ml.innerHTML=malls.map(m=>`
+    <div class="mall-row" onclick="showToast('${m.name}')">
+      <div class="mall-icon">🏬</div>
+      <div><div class="mall-row-name">${m.name}</div><div class="mall-loc">${m.loc}</div></div>
+    </div>`).join('');
+}
+function setOfferCat(c){activeOfferCat=c;renderOffers();}
+
+/* ── DETAIL MODAL ───────────────────────────────────────── */
+function openDetail(html){
+  document.getElementById('detail-content').innerHTML=html;
+  document.getElementById('detail-overlay').classList.add('open');
+  document.getElementById('detail-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDetail(){
+  document.getElementById('detail-overlay').classList.remove('open');
+  document.getElementById('detail-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+function openEventDetail(id){
+  const e=events.find(ev=>ev.id===id); if(!e) return;
+  const idx=events.indexOf(e);
+  openDetail(`
+    <div class="detail-hero" style="background:${bgColors[idx%bgColors.length]}">${e.emoji}</div>
+    <div class="detail-body">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div class="detail-title">${e.title}</div>
+        <div class="ev-status ${e.status}" style="flex-shrink:0;margin-top:2px">${e.status.charAt(0).toUpperCase()+e.status.slice(1)}</div>
+      </div>
+      <div class="detail-info-box">
+        <div class="ev-row">📅 ${e.date}</div>
+        <div class="ev-row" style="color:var(--teal)">📍 ${e.location}</div>
+        <div class="ev-row">💰 ${e.price}</div>
+        <div class="ev-row">🎯 ${e.type}</div>
+      </div>
+      <p class="detail-desc">${e.desc}</p>
+      <button class="btn-primary" onclick="showToast('Booking confirmed! 🌸');closeDetail()">
+        ${e.priceVal===0?'Register Free →':'Book Now · '+e.price+' →'}
+      </button>
+      <button class="btn-outline" onclick="closeDetail()" style="padding:12px">Cancel</button>
+    </div>`);
+}
+function openOfferDetail(id){
+  const o=offers.find(of=>of.id===id); if(!o) return;
+  const idx=offers.indexOf(o);
+  openDetail(`
+    <div class="detail-hero" style="background:${bgColors[idx%bgColors.length]};font-size:64px">${o.locked?'🔒':'🏷'}</div>
+    <div class="detail-body">
+      <div class="detail-title">${o.title}</div>
+      <div class="detail-info-box">
+        <div class="ev-row">🏪 ${o.brand}</div>
+        <div class="ev-row">💰 ${o.discount}</div>
+        <div class="ev-row">📍 ${o.channel}</div>
+        <div class="ev-row">🗂 ${o.cat}</div>
+      </div>
+      ${o.locked
+        ?'<p class="detail-desc">This offer is available for Mestahla Pro members. Upgrade to unlock exclusive deals from top brands.</p><button class="btn-primary" onclick="showToast(\'Upgrade coming soon 🌸\');closeDetail()">Unlock with Pro ✨</button>'
+        :'<p class="detail-desc">Show this offer at the brand\'s store or online checkout to redeem your discount.</p><button class="btn-primary" onclick="showToast(\'Offer copied! Show at checkout 🌸\');closeDetail()">Redeem Offer →</button>'
+      }
+      <button class="btn-outline" onclick="closeDetail()" style="padding:12px">Close</button>
+    </div>`);
+}
+function openArticleDetail(idx){
+  const a=articles[idx]; if(!a) return;
+  openDetail(`
+    <div class="detail-hero" style="background:var(--yellow-lt)">${a.emoji}</div>
+    <div class="detail-body">
+      <div class="detail-title">${a.title}</div>
+      <div class="detail-info-box"><div class="ev-row">⏱ ${a.meta}</div></div>
+      <p class="detail-desc">This article is part of Mestahla's curated content library, written and reviewed by certified maternal health professionals. Full content coming in the next release.</p>
+      <button class="btn-primary" onclick="showToast('Saved to My Journey 🌸');closeDetail()">Save to My Journey</button>
+      <button class="btn-outline" onclick="closeDetail()" style="padding:12px">Close</button>
+    </div>`);
+}
+
+/* ── RENDER: CIRCLE ─────────────────────────────────────── */
+function renderCircle(){
+  const el=document.getElementById('circle-posts');
+  if(el) el.innerHTML=posts.map(p=>`
+    <div class="post-card">
+      <div class="post-hd"><div class="post-av" style="background:${p.c}">${p.i}</div><div><div class="post-name">${p.n}</div><div class="post-time">${p.time}</div></div></div>
+      <div class="post-text">${p.t}</div>
+      <div class="post-actions-row">
+        <div class="post-action" onclick="showToast('Liked 💛')">❤️ ${p.likes}</div>
+        <div class="post-action">💬 ${p.comments} comments</div>
+        <div class="post-action">↗ Share</div>
+      </div>
+    </div>`).join('');
+  const tl=document.getElementById('trending-list');
+  if(tl) tl.innerHTML=trending.map((t,i)=>`
+    <div class="trending-item"><div class="trending-num">${i+1}</div><div class="trending-text">${t}</div></div>`).join('');
+}
+
+/* ── WATER / MOOD ───────────────────────────────────────── */
+function renderWater(){
+  const el=document.getElementById('water-glasses');
+  if(!el) return;
+  el.innerHTML=Array.from({length:8},(_,i)=>`<div class="glass ${i<waterCount?'filled':'empty'}" onclick="toggleWater(${i})">💧</div>`).join('');
+}
+function toggleWater(i){waterCount=i<waterCount?i:i+1;renderWater();}
+function setMood(el){document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+
+/* ── TOAST ──────────────────────────────────────────────── */
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.remove('gone');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.add('gone'),2600);
+}
+
+/* ── INIT ───────────────────────────────────────────────── */
+renderHome();
+renderWater();
+</script>
+
+
+<script id="logo-injector">
+(function(){
+  var t="/logo-teal.png", w="/logo-white.png";
+  document.querySelectorAll(".logo-teal").forEach(function(el){el.src=t;});
+  document.querySelectorAll(".logo-white").forEach(function(el){el.src=w;});
+})();
+</script></body>
+</html>
