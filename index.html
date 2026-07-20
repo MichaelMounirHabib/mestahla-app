@@ -222,11 +222,7 @@ a{color:var(--brand);cursor:pointer;text-decoration:none}
 .event-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;transition:transform .15s}
 .event-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
 .event-img{width:100%;height:160px;object-fit:cover;position:relative;display:flex;align-items:center;justify-content:center;font-size:48px}
-.ev-img-wrap{position:relative}
-.ev-status{position:absolute;top:10px;right:10px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#fff}
-.ev-status.confirmed{background:var(--teal)}
-.ev-status.waitlisted{background:var(--amber)}
-.ev-status.free{background:#16A34A}
+/* ev card styles below */
 .event-body{padding:14px}
 .event-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:9px;line-height:1.35}
 .event-meta{display:flex;flex-direction:column;gap:4px}
@@ -384,7 +380,27 @@ a{color:var(--brand);cursor:pointer;text-decoration:none}
 .sb-social a:hover{background:var(--coral)}
 .sb-social svg{width:15px;height:15px;fill:rgba(255,255,255,.6)}
 .sb-social a:hover svg{fill:#fff}
-</style>
+
+/* ── EVENT CARD ─────────────────────────────────────────────── */
+.ev-img-wrap{border-radius:14px 14px 0 0;overflow:hidden;background:#f0f0f0}
+.ev-emoji-bg{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:60px}
+.ev-pills{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.ev-cat-pill{background:var(--brand-lt);color:var(--teal);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.2px}
+.ev-st-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.ev-st-confirmed{background:#DCFCE7;color:#166534}
+.ev-st-waitlisted{background:#FEF9C3;color:#854D0E}
+.ev-st-sold-out{background:#FEE2E2;color:#991B1B}
+.ev-st-free,.ev-st-open{background:#E0F2FE;color:#075985}
+.ev-row{font-size:13px;color:var(--ink-2);line-height:1.5;display:flex;align-items:flex-start;gap:5px}
+
+/* ── FILTER BAR ─────────────────────────────────────────────── */
+.evt-filters-wrap{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:20px;display:flex;flex-direction:column;gap:10px}
+.evt-filter-row{display:flex;align-items:center;gap:8px}
+.flabel{font-size:16px;flex-shrink:0;width:24px;text-align:center}
+.fchips{display:flex;gap:6px;flex-wrap:wrap}
+.fchip{padding:6px 14px;border-radius:30px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid #E2EAE8;color:var(--ink-2);background:#fff;transition:all .15s;white-space:nowrap;line-height:1.4}
+.fchip:hover{border-color:var(--teal);color:var(--teal)}
+.fchip-on{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}</style>
 </head>
 <body>
 
@@ -685,23 +701,11 @@ a{color:var(--brand);cursor:pointer;text-decoration:none}
             </div>
           </div>
           <!-- FILTERS -->
-          <div class="evt-filters">
-            <div class="evt-filter-row">
-              <span class="evt-filter-label">📍 Location</span>
-              <div class="chips" id="evt-loc-chips"></div>
-            </div>
-            <div class="evt-filter-row">
-              <span class="evt-filter-label">💰 Price</span>
-              <div class="chips" id="evt-price-chips"></div>
-            </div>
-            <div class="evt-filter-row">
-              <span class="evt-filter-label">🎯 Category</span>
-              <div class="chips" id="evt-type-chips"></div>
-            </div>
-            <div class="evt-filter-row">
-              <span class="evt-filter-label">📅 Date</span>
-              <div class="chips" id="evt-date-chips"></div>
-            </div>
+          <div class="evt-filters-wrap">
+            <div class="evt-filter-row"><span class="flabel">📍</span><div class="fchips" id="evt-loc-chips"></div></div>
+            <div class="evt-filter-row"><span class="flabel">💰</span><div class="fchips" id="evt-price-chips"></div></div>
+            <div class="evt-filter-row"><span class="flabel">🏷️</span><div class="fchips" id="evt-type-chips"></div></div>
+            <div class="evt-filter-row"><span class="flabel">📅</span><div class="fchips" id="evt-date-chips"></div></div>
           </div>
           <div class="events-grid"'@
 
@@ -1055,14 +1059,16 @@ const evtTypes=['All','Fair','Workshop','Masterclass','Support Circle','Show','C
 const evtDates=['All','This Week','This Month','Upcoming'];
 
 function renderEventFilters(){
-  const lc=document.getElementById('evt-loc-chips');
-  const pc=document.getElementById('evt-price-chips');
-  const tc=document.getElementById('evt-type-chips');
-  const dc=document.getElementById('evt-date-chips');
-  if(lc) lc.innerHTML=evtLocs.map(v=>`<div class="chip ${evtLocFilter===v?'active':''}" onclick="setEvtLoc('${v}')">${v}</div>`).join('');
-  if(pc) pc.innerHTML=evtPrices.map(v=>`<div class="chip ${evtPriceFilter===v?'active':''}" onclick="setEvtPrice('${v}')">${v}</div>`).join('');
-  if(tc) tc.innerHTML=evtTypes.map(v=>`<div class="chip ${evtTypeFilter===v?'active':''}" onclick="setEvtType('${v}')">${v}</div>`).join('');
-  if(dc) dc.innerHTML=evtDates.map(v=>`<div class="chip ${evtDateFilter===v?'active':''}" onclick="setEvtDate('${v}')">${v}</div>`).join('');
+  const groups=[
+    {id:'evt-loc-chips',  values:evtLocs,   active:evtLocFilter,   fn:'setEvtLoc'},
+    {id:'evt-price-chips',values:evtPrices, active:evtPriceFilter, fn:'setEvtPrice'},
+    {id:'evt-type-chips', values:evtTypes,  active:evtTypeFilter,  fn:'setEvtType'},
+    {id:'evt-date-chips', values:evtDates,  active:evtDateFilter,  fn:'setEvtDate'},
+  ];
+  groups.forEach(g=>{
+    const el=document.getElementById(g.id); if(!el) return;
+    el.innerHTML=g.values.map(v=>`<button class="fchip${g.active===v?' fchip-on':''}" onclick="${g.fn}('${v}')">${v}</button>`).join('');
+  });
 }
 // setEvtLoc merged();}
 // setEvtPrice merged();}
@@ -1073,18 +1079,11 @@ function setEvtDate(v){evtDateFilter=v;renderEventFilters();renderEvents();}
 // setEvtType merged();}
 
 function renderEvents(){
-  // Refresh from shared localStorage on every render (picks up admin edits)
-  try {
-    const raw = localStorage.getItem(EVENTS_KEY);
-    if (raw) {
-      const stored = JSON.parse(raw);
-      if (Array.isArray(stored) && stored.length) events.splice(0, events.length, ...stored);
-    }
-  } catch(e) {}
+  try{const r=localStorage.getItem(EVENTS_KEY);if(r){const s=JSON.parse(r);if(Array.isArray(s)&&s.length)events.splice(0,events.length,...s);}}catch(e){}
   renderEventFilters();
   const q=(document.getElementById('event-search')?.value||'').toLowerCase();
-  const now=new Date(); now.setHours(0,0,0,0);
-  const endOfWeek=new Date(now); endOfWeek.setDate(now.getDate()+7);
+  const now=new Date();now.setHours(0,0,0,0);
+  const endOfWeek=new Date(now);endOfWeek.setDate(now.getDate()+7);
   const endOfMonth=new Date(now.getFullYear(),now.getMonth()+1,0);
   const list=events.filter(e=>{
     if(!e.active) return false;
@@ -1096,7 +1095,7 @@ function renderEvents(){
     if(evtPriceFilter==='500-1500'&&(e.priceMin<500||e.priceMin>1500)) return false;
     if(evtPriceFilter==='1500+'&&e.priceMin<1500) return false;
     if(evtDateFilter!=='All'&&e.date){
-      const ed=new Date(e.date+'T00:00:00'); ed.setHours(0,0,0,0);
+      const ed=new Date(e.date+'T00:00:00');ed.setHours(0,0,0,0);
       if(evtDateFilter==='This Week'&&(ed<now||ed>endOfWeek)) return false;
       if(evtDateFilter==='This Month'&&(ed<now||ed>endOfMonth)) return false;
       if(evtDateFilter==='Upcoming'&&ed<now) return false;
@@ -1104,22 +1103,31 @@ function renderEvents(){
     return true;
   });
   list.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
-  const el=document.getElementById('events-grid'); if(!el) return;
+  const el=document.getElementById('events-grid');if(!el) return;
   el.innerHTML=list.map((e,i)=>{
-    const imgHtml=e.imageUrl
-      ?`<img src="${e.imageUrl}" style="width:100%;height:180px;object-fit:cover;display:block" alt="${e.title}" onerror="this.style.display='none'">`
-      :`<div style="width:100%;height:180px;background:${bgColors[i%bgColors.length]};display:flex;align-items:center;justify-content:center;font-size:56px">${e.emoji}</div>`;
+    // Compute display values with fallbacks (handles admin-synced events)
+    const dDisp=e.dateDisplay||(e.date?new Date(e.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}):'TBA');
+    const tDisp=e.timeDisplay||(e.time?new Date('2000-01-01T'+e.time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}):'');
     const priceLabel=e.priceMin===0?'Free':(e.priceMax>e.priceMin?`EGP ${e.priceMin.toLocaleString()}–${e.priceMax.toLocaleString()}`:`EGP ${e.priceMin.toLocaleString()}`);
+    const statusLabel=e.status==='confirmed'?'Confirmed':e.status==='waitlisted'?'Waitlisted':e.status==='sold-out'?'Sold Out':'Open';
+    const imgHtml=e.imageUrl
+      ?`<img src="${e.imageUrl}" style="width:100%;height:180px;object-fit:cover;display:block;border-radius:14px 14px 0 0" alt="${e.title}" onerror="this.parentElement.querySelector('.ev-emoji-bg').style.display='flex';this.style.display='none'">`
+      :'';
+    const showEmoji=!e.imageUrl;
     return `<div class="event-card" onclick="openEventDetail(${e.id})">
-      <div class="ev-img-wrap">${imgHtml}
-        <div class="ev-status-badge ${e.status}">${e.status==='confirmed'?'Confirmed':e.status==='waitlisted'?'Waitlisted':e.status==='sold-out'?'Sold Out':'Open'}</div>
-        <div class="ev-cat-badge">${e.category}</div>
+      <div class="ev-img-wrap">
+        ${imgHtml}
+        <div class="ev-emoji-bg" style="display:${showEmoji?'flex':'none'};background:${bgColors[i%bgColors.length]}">${e.emoji||'📅'}</div>
       </div>
       <div class="event-body">
+        <div class="ev-pills">
+          <span class="ev-cat-pill">${e.category||''}</span>
+          <span class="ev-st-pill ev-st-${e.status}">${statusLabel}</span>
+        </div>
         <div class="event-title">${e.title}</div>
         <div class="event-meta">
-          <div class="ev-row">📅 ${e.dateDisplay}${e.dateEnd?' – '+e.dateEnd:''} · ${e.timeDisplay}</div>
-          <div class="ev-row" style="color:var(--teal)">📍 ${e.venue}</div>
+          <div class="ev-row">📅 ${dDisp}${e.dateEnd?' – '+e.dateEnd:''} · ${tDisp}</div>
+          <div class="ev-row" style="color:var(--teal)">📍 ${e.venue||''}</div>
           <div class="ev-row">🎫 <strong>${priceLabel}</strong>${e.organizer?' · '+e.organizer:''}</div>
         </div>
       </div>
