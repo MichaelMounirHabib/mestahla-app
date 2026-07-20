@@ -670,6 +670,10 @@ a{color:var(--brand);cursor:pointer;text-decoration:none}
                 <div class="upcoming-title">Upcoming: Anatomy Scan</div>
                 <div class="upcoming-desc">Your 24-week scan checks baby's organs, position, and your placenta health.</div>
               </div>
+              <div class="j-card" style="margin-top:16px" id="saved-reads-card">
+                <div class="j-card-hd"><div class="j-icon">📖</div>Saved Reads</div>
+                <div id="saved-reads-list" style="margin-top:8px"></div>
+              </div>
             </div>
             <div>
               <div class="j-card">
@@ -1012,6 +1016,7 @@ function setTab(tab){
   if(tab==='events') renderEvents();
   if(tab==='offers') renderOffers();
   if(tab==='circle') renderCircle();
+  if(tab==='journey') renderSavedReads();
   closeSidebar();
   document.getElementById('app-pages').scrollTop=0;
 }
@@ -1251,8 +1256,42 @@ function openOfferDetail(id){
       <button class="btn-outline" onclick="closeDetail()" style="padding:12px">Close</button>
     </div>`);
 }
+const SAVED_READS_KEY='mestahla_saved_reads';
+function getSavedReads(){try{return JSON.parse(localStorage.getItem(SAVED_READS_KEY)||'[]');}catch(e){return[];}}
+function saveArticleToJourney(idx){
+  const saved=getSavedReads();
+  if(!saved.includes(idx)){saved.push(idx);localStorage.setItem(SAVED_READS_KEY,JSON.stringify(saved));}
+  showToast('Saved to My Journey 🌸');
+  closeDetail();
+}
+function removeSavedRead(idx){
+  const saved=getSavedReads().filter(i=>i!==idx);
+  localStorage.setItem(SAVED_READS_KEY,JSON.stringify(saved));
+  renderSavedReads();
+}
+function renderSavedReads(){
+  const el=document.getElementById('saved-reads-list'); if(!el) return;
+  const saved=getSavedReads();
+  if(!saved.length){
+    el.innerHTML='<div style="color:var(--ink-3);font-size:13px;padding:8px 0">No saved articles yet. Tap an article and hit Save to My Journey.</div>';
+    return;
+  }
+  el.innerHTML=saved.map(idx=>{
+    const a=articles[idx]; if(!a) return '';
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="font-size:28px;min-width:36px;text-align:center">${a.emoji}</div>
+      <div style="flex:1;cursor:pointer" onclick="openArticleDetail(${idx})">
+        <div style="font-weight:600;font-size:14px;color:var(--ink)">${a.title}</div>
+        <div style="font-size:12px;color:var(--ink-3)">⏱ ${a.meta}</div>
+      </div>
+      <button onclick="removeSavedRead(${idx})" style="background:none;border:none;color:var(--ink-3);font-size:18px;cursor:pointer;padding:4px">×</button>
+    </div>`;
+  }).join('');
+}
 function openArticleDetail(idx){
   const a=articles[idx]; if(!a) return;
+  const saved=getSavedReads();
+  const alreadySaved=saved.includes(idx);
   openDetail(`
     <div class="detail-hero" style="background:var(--yellow-lt);font-size:64px">${a.emoji}</div>
     <div class="detail-body">
@@ -1260,7 +1299,9 @@ function openArticleDetail(idx){
       <div class="detail-title">${a.title}</div>
       <div class="detail-info-box"><div class="ev-row">⏱ ${a.meta}</div></div>
       <div class="detail-desc" style="line-height:1.75;color:var(--ink-2)">${a.body||''}</div>
-      <button class="btn-primary" onclick="showToast('Saved to My Journey 🌸');closeDetail()">Save to My Journey</button>
+      ${alreadySaved
+        ?`<button class="btn-outline" style="padding:14px;opacity:.7" disabled>✓ Already in My Journey</button>`
+        :`<button class="btn-primary" onclick="saveArticleToJourney(${idx})">Save to My Journey</button>`}
       <button class="btn-outline" onclick="closeDetail()" style="padding:12px">Close</button>
     </div>`);
 }
